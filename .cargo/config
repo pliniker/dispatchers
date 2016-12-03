@@ -1,0 +1,5 @@
+[target.arm-linux-androideabi]
+linker = "/home/pliniker/src/3rd/android-18-toolchain/bin/arm-linux-androideabi-gcc"
+
+[target.aarch64-linux-android]
+linker = "/home/pliniker/src/3rd/android-21-toolchain-aarch64/bin/aarch64-linux-android-gcc"
