@@ -19,6 +19,7 @@
 ///  * portability
 ///  * playing with safety fire by inserting jmp instructions in the middle of a function
 ///  * highly dependent on LLVM doing something expected
+///  * uses unstable asm feature, requires nightly
 ///
 
 extern crate test;
