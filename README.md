@@ -1,8 +1,11 @@
 # Virtual Machine Dispatch Experiments in Rust
 
-Computed gotos are an occasionally requested feature of Rust for optimizing interpreter virtual
-machines and finite state machines.  GCC and clang both support computed gotos and as a systems language, 
-it does seem reasonable to wish for support in Rust.
+__TODO NEEDS BETTER BENCHMARK CODE__
+
+Computed gotos are an occasionally requested feature of Rust for optimizing interpreter virtual 
+machines and finite state machines.  A Google search will turn up numerous discussions on interpreted 
+language mailing lists on converting to computed goto dispatch. GCC and clang both support computed 
+gotos and as a systems language, it does seem reasonable to wish for support in Rust.
 
 Tail calls converted to jump instructions can be used to similar effect to computed gotos; however,
 Rust does not guarantee tail call optimization, though LLVM is free to apply it.
@@ -13,10 +16,28 @@ switch/matchstatements.
 I thought I'd conduct some experiments to get first hand experience of the performance
 advantages of computed gotos, and to find out what is possible in Rust.
 
+#### tl;dr
+
+Computed gotos and tail calls may give a worthwhile advantage on older or low-power architectures. 
+There are a lot of these around, ARM processors being ubiquitous. The performance improvement over 
+a single match statement could be up to 20%.
+
+On Haswell and newer wide-issue Intel CPUs, it is claimed that branch predictor performance reduces 
+the advantage of gotos over switch but my experiment show a 20% improvement here too. There is no
+doubt that the penalty
+
+If every cycle counts and you are targeting ARM or mobile x86/64 then looking for a way to implement 
+gotos in Rust may be important.
+
+#### Caveats
+
+My experimentation only has one benchmark but it does sufficiently illustrate the difference between
+dispatch methods.
+
 
 ### Why Computed Gotos are considered faster
 
-A switch-based dispatch routine, illustrated in the following example, will most likely compile down
+A switch-based dispatch routine, illustrated in the following C example, will most likely compile down
 to a jump table and a single indirect branch at the top of the loop.
 
 ```C
@@ -35,21 +56,23 @@ while (1) {
 }
 ```
 
-When choosing the next VM instruction code, the  the [most cited][5] paper on the topic describes
-a 100% branch predictor prediction failure rate under VM dispatch circumstances for now-old CPU
-implementations.
-
-Computed gotos with jump tables are a programming pattern that can improve CPU branch predictor 
-success rate in VM dispatch and FSMs.
-
 Every time a VM runtime decides what code to run after fetching an
-opcode, it typically looks up the address of the code in a table that maps from
+opcode, it typically looks up the address of the code in a jump table that maps from
 opcode to address. It then executes an indirect branch to that address.
 A typical pipelined CPU will have made a guess using it's branch predictor
 where it thinks that branch address is. If it guessed wrong, the pipeline
 is flushed and the CPU starts loading instructions over again at the correct address.
 Every time a branch address is wrongly predicted, a number of cycles, typically on the
-order of 15 or so, are lost to refilling the pipeline.
+order of 15 or so, are lost to refilling the pipeline from the correct target address.
+
+When choosing the next VM instruction code, the  the [most cited][5] paper on the topic describes
+a worst case 100% branch predictor prediction failure rate under VM dispatch circumstances, at least 
+for now-old CPU implementations.
+
+
+Computed gotos with jump tables are a programming pattern that can improve CPU branch predictor 
+success rate in VM dispatch and FSMs.
+
 
 
 ## Switch based dispatch
@@ -101,7 +124,10 @@ implementation:
 
 What is notable about this code is that LLVM has optimized it very reasonably. It has viewed
 the dispatch routine and the inlined VM instruction code as a whole and allocated registers
-appropriately.
+appropriately. The little overhead in this example (adjusting the opcode value for indexing into
+the jump table by `decb %cl` and storing the counter back to it's stack address with 
+`movq %rbx, 24(%rsp)`) could be eliminated by some minor source code adjustments. I'm not a
+pipeline and superscalar expert so I don't think I could hand code this [any better][7].
 
 
 ## Threaded dispatch
@@ -141,3 +167,4 @@ all opcode functions and optimize them as one unit, making much better use of re
 * [4]: [Pretty State Machine Patterns in Rust](https://hoverbear.org/2016/10/12/rust-state-machine-pattern/) - Andrew Hobden, 2016
 * [5]: [The Structure and Performance of Efficient Interpreters](http://www.jilp.org/vol5/v5paper12.pdf) - Ertl and Gregg, 2003
 * [6]: [Branch Prediction and the Performance of Interpreters](https://hal.inria.fr/hal-01100647/document) - Rohou, Swamy and Seznec, 2015
+* [7]: [LuaJIT 2 beta 3 is out: Support both x32 & x64](https://www.reddit.com/r/programming/comments/badl2/luajit_2_beta_3_is_out_support_both_x32_x64/c0lrus0/) - Mike Pall, Discussion on Reddit, 2010
