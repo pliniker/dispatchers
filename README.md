@@ -1,34 +1,107 @@
 # Virtual Machine Dispatch Experiments in Rust
 
-Computed gotos are an occasionally requested feature of Rust.
+Computed gotos are an occasionally requested feature of Rust for optimizing interpreter virtual
+machines and finite state machines.  GCC and clang both support computed gotos and as a systems language, 
+it does seem reasonable to wish for support in Rust.
 
-Computed gotos are a 
-programming pattern that can improve CPU branch predictor success rate in VM dispatch and 
-state machines. Every time a VM runtime decides what code to run after fetching an
-opcode, it typically looks up the address of the code in a table that maps from
-opcode to address. It then executes an indirect branch, where the target address is
-in a register. A typical pipelined CPU will have made a guess using it's branch predictor
-where it thinks that branch address is. If it makes the wrong choice, the pipeline
-is flushed and the CPU starts loading instructions over again at the correct address.
-Every time a branch address is wrongly predicted, a number of cycles, typically on the
-order of 15 or so, are lost to refilling the pipeline.
-
-GCC and clang both support computed gotos and as a systems language, it does seem 
-reasonable to wish for support in Rust.
-
-Tail calls converted to jump instructions can be used to effect computed gotos. However,
+Tail calls converted to jump instructions can be used to similar effect to computed gotos; however,
 Rust does not guarantee tail call optimization, though LLVM is free to apply it.
 
-When computed gotos are unavailable, the fallback standard is to use switch/match
-statements. These can be notoriously slow: the most cited papers describe a 100% branch
-predictor prediction failure rate under VM dispatch circumstances for now-old CPU
-implementations.
+When computed gotos and optimized tail calls are unavailable, the fallback standard is to use 
+switch/matchstatements. 
 
 I thought I'd conduct some experiments to get first hand experience of the performance
 advantages of computed gotos, and to find out what is possible in Rust.
 
 
+### Why Computed Gotos are considered faster
+
+A switch-based dispatch routine, illustrated in the following example, will most likely compile down
+to a jump table and a single indirect branch at the top of the loop.
+
+```C
+while (1) {
+  switch opcode {
+  case OP_JMP:
+    pc = jmp_target(opcode);
+    opcode = fetch(pc);
+    break;
+  case OP_ADD:
+    op_add();
+    opcode = fetch(++pc);
+    break;
+  ...
+  }
+}
+```
+
+When choosing the next VM instruction code, the  the [most cited][5] paper on the topic describes
+a 100% branch predictor prediction failure rate under VM dispatch circumstances for now-old CPU
+implementations.
+
+Computed gotos with jump tables are a programming pattern that can improve CPU branch predictor 
+success rate in VM dispatch and FSMs.
+
+Every time a VM runtime decides what code to run after fetching an
+opcode, it typically looks up the address of the code in a table that maps from
+opcode to address. It then executes an indirect branch to that address.
+A typical pipelined CPU will have made a guess using it's branch predictor
+where it thinks that branch address is. If it guessed wrong, the pipeline
+is flushed and the CPU starts loading instructions over again at the correct address.
+Every time a branch address is wrongly predicted, a number of cycles, typically on the
+order of 15 or so, are lost to refilling the pipeline.
+
+
 ## Switch based dispatch
+
+[switch.rs](https://github.com/pliniker/dispatchers/blob/master/src/switch.rs) compiles to a
+[jump table](https://github.com/pliniker/dispatchers/blob/master/emitted_asm/switch_x86_64.s)
+implementation:
+
+```asm
+.LBB0_5:                                # beginning of dispatch loop
+	movq	32(%rsp), %rdi              # load address of program Vec
+	movl	(%rdi,%rsi,4), %eax         # rsi contains pc; fetch next opcode
+	movl	%eax, %ecx                  # eax contains opcode; extract operator byte
+	decb	%cl                         # adjust for jump table indexing
+	movzbl	%cl, %ecx
+	cmpb	$11, %cl                    # bounds check on jump table index
+	ja	.LBB0_50
+	movslq	(%r8,%rcx,4), %rcx          # r8 contains address of jump table .LJTI0_0
+	addq	%r8, %rcx                   # convert offset rcx into an absolute address
+	jmpq	*%rcx                       # indirect branch to instruction code
+....
+.LBB0_14:                               # instruction code for OP_JMP
+	shrl	$16, %eax                   # extract branch target adddress
+	movq	%rax, %rsi                  # assign to pc
+	jmp	.LBB0_46                        # go to the bottom of loop
+....
+.LBB0_45:                               # other instructions just increment the pc
+	incq	%rsi
+.LBB0_46:                               # bottom of the loop
+	incq	%rbx                        # rbx contains counter
+	movq	%rbx, 24(%rsp)              # writing the counter back to it's stack location
+	cmpq	%rsi, %rdx                  # bounds check on program Vec access
+	ja	.LBB0_5                         # all good? start loop over
+....
+.LJTI0_0:                               # jump table
+	.long	.LBB0_14-.LJTI0_0
+	.long	.LBB0_7-.LJTI0_0
+	.long	.LBB0_18-.LJTI0_0
+	.long	.LBB0_19-.LJTI0_0
+	.long	.LBB0_12-.LJTI0_0
+	.long	.LBB0_26-.LJTI0_0
+	.long	.LBB0_27-.LJTI0_0
+	.long	.LBB0_24-.LJTI0_0
+	.long	.LBB0_32-.LJTI0_0
+	.long	.LBB0_15-.LJTI0_0
+	.long	.LBB0_28-.LJTI0_0
+	.long	.LBB0_10-.LJTI0_0
+```
+
+What is notable about this code is that LLVM has optimized it very reasonably. It has viewed
+the dispatch routine and the inlined VM instruction code as a whole and allocated registers
+appropriately.
 
 
 ## Threaded dispatch
@@ -62,8 +135,9 @@ all opcode functions and optimize them as one unit, making much better use of re
 
 ## References
 
-[1]: [How can I approach the performance of C interpreter that uses computed gotos?](http://users.rust-lang.org/t/how-can-i-approach-the-performance-of-c-interpreter-that-uses-computed-gotos/6261/4) - Discussion on users.rust-lang.org
-[2]: [Pretty State Machine Patterns in Rust](https://hoverbear.org/2016/10/12/rust-state-machine-pattern/) - Andrew Hobden
-
-https://internals.rust-lang.org/t/gotos-in-restricted-functions/4393
-http://eli.thegreenplace.net/2012/07/12/computed-goto-for-efficient-dispatch-tables
+* [1]: [Computed goto for efficient dispatch tables](http://eli.thegreenplace.net/2012/07/12/computed-goto-for-efficient-dispatch-tables) - Eli Bendersky, 2012
+* [2]: [How can I approach the performance of C interpreter that uses computed gotos?](http://users.rust-lang.org/t/how-can-i-approach-the-performance-of-c-interpreter-that-uses-computed-gotos/6261/4) - Discussion on Rust Users forum, 2016
+* [3]: [Gotos in restricted functions](https://internals.rust-lang.org/t/gotos-in-restricted-functions/4393) - Discussion on Rust Internals forum, 2016
+* [4]: [Pretty State Machine Patterns in Rust](https://hoverbear.org/2016/10/12/rust-state-machine-pattern/) - Andrew Hobden, 2016
+* [5]: [The Structure and Performance of Efficient Interpreters](http://www.jilp.org/vol5/v5paper12.pdf) - Ertl and Gregg, 2003
+* [6]: [Branch Prediction and the Performance of Interpreters](https://hal.inria.fr/hal-01100647/document) - Rohou, Swamy and Seznec, 2015
