@@ -6,7 +6,7 @@
 extern crate test;
 
 
-use vm::{Image, Mem, Thread, ThreadInner, operator, ops};
+use vm::{Image, Thread, ThreadInner, operator, ops};
 
 
 pub struct SwitchThread {
@@ -16,10 +16,10 @@ pub struct SwitchThread {
 
 
 impl Thread for SwitchThread {
-    fn new(image: &Image, memory: &Mem) -> SwitchThread {
+    fn new(image: &Image) -> SwitchThread {
         SwitchThread {
             counter: 0,
-            inner: ThreadInner::new(image, memory)
+            inner: ThreadInner::new(image)
         }
     }
 
@@ -31,13 +31,14 @@ impl Thread for SwitchThread {
     }
 
     fn run(&mut self) {
+        let mut counter = 0;
         let mut pc = 0;
+
         loop {
-            self.counter += 1;
+            counter += 1;
             let opcode = self.inner.fetch(pc);
 
             match operator(opcode) {
-                ops::HLT => break,
                 ops::JMP => pc = self.inner.op_jmp(opcode, pc),
                 ops::ADD => pc = self.inner.op_add(opcode, pc),
                 ops::MOV => pc = self.inner.op_mov(opcode, pc),
@@ -48,13 +49,15 @@ impl Thread for SwitchThread {
                 },
                 ops::LDB => pc = self.inner.op_ldb(opcode, pc),
                 ops::LDI => pc = self.inner.op_ldi(opcode, pc),
-                ops::LDR => pc = self.inner.op_ldr(opcode, pc),
-                ops::LOD => pc = self.inner.op_lod(opcode, pc),
-                ops::STO => pc = self.inner.op_sto(opcode, pc),
                 ops::CGT => pc = self.inner.op_cgt(opcode, pc),
+                ops::RND => pc = self.inner.op_rnd(opcode, pc),
+                ops::DIV => pc = self.inner.op_div(opcode, pc),
+                ops::MOD => pc = self.inner.op_mod(opcode, pc),
                 _ => break
             }
         }
+
+        self.counter = counter;
     }
 }
 
@@ -69,8 +72,34 @@ mod bench {
 
 
     #[bench]
-    fn bench_nested_loop(b: &mut Bencher) {
-        let mut thread = SwitchThread::new(&fixture::nested_loop(), &Vec::new());
+    fn bench_1_nested_loop(b: &mut Bencher) {
+        let mut thread = SwitchThread::new(&fixture::nested_loop());
+        let mut icount = 0;
+
+        b.iter(|| {
+            thread.run();
+            icount = thread.reset();
+        });
+
+        b.bytes = icount as u64;
+    }
+
+    #[bench]
+    fn bench_2_longer_repetitive(b: &mut Bencher) {
+        let mut thread = SwitchThread::new(&fixture::longer_repetitive());
+        let mut icount = 0;
+
+        b.iter(|| {
+            thread.run();
+            icount = thread.reset();
+        });
+
+        b.bytes = icount as u64;
+    }
+
+    #[bench]
+    fn bench_3_unpredictable(b: &mut Bencher) {
+        let mut thread = SwitchThread::new(&fixture::unpredictable());
         let mut icount = 0;
 
         b.iter(|| {

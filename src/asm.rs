@@ -60,29 +60,31 @@ pub fn ldi(reg1: Register, val: BaseInt) -> Opcode {
 }
 
 
-pub fn ldr(reg1: Register, reg_addr: Register) -> Opcode {
-    ops::LDR as Opcode |
-    (reg1 << 8) as Opcode |
-    (reg_addr << 16) as Opcode
-}
-
-
-pub fn lod(reg_addr: Register, reg2: Register) -> Opcode {
-    ops::LOD as Opcode |
-    (reg_addr << 8) as Opcode |
-    (reg2 << 16) as Opcode
-}
-
-
-pub fn sto(reg1: Register, reg_addr: Register) -> Opcode {
-    ops::STO as Opcode |
-    (reg1 << 8) as Opcode |
-    (reg_addr << 16) as Opcode
-}
-
-
 pub fn cgt(reg1: Register, reg2: Register, dest: Register) -> Opcode {
     ops::CGT as Opcode |
+    (reg1 << 8) as Opcode |
+    (reg2 << 16) as Opcode |
+    (dest << 24) as Opcode
+}
+
+
+pub fn rnd(reg1: Register, max: BaseInt) -> Opcode {
+    ops::RND as Opcode |
+    (reg1 << 8) as Opcode |
+    ((max as Opcode) << 16)
+}
+
+
+pub fn div(reg1: Register, reg2: Register, dest: Register) -> Opcode {
+    ops::DIV as Opcode |
+    (reg1 << 8) as Opcode |
+    (reg2 << 16) as Opcode |
+    (dest << 24) as Opcode
+}
+
+
+pub fn modulus(reg1: Register, reg2: Register, dest: Register) -> Opcode {
+    ops::MOD as Opcode |
     (reg1 << 8) as Opcode |
     (reg2 << 16) as Opcode |
     (dest << 24) as Opcode

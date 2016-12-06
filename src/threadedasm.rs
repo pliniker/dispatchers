@@ -25,7 +25,7 @@
 extern crate test;
 
 
-use vm::{Image, Mem, Thread, ThreadInner, operator, ops};
+use vm::{Image, Thread, ThreadInner, operator, ops};
 
 
 /// Creates a label that can be jumped to. Parameter $name must be a string and a unique label
@@ -122,10 +122,10 @@ pub struct ThreadedAsmThread {
 
 
 impl Thread for ThreadedAsmThread {
-    fn new(image: &Image, memory: &Mem) -> ThreadedAsmThread {
+    fn new(image: &Image) -> ThreadedAsmThread {
         ThreadedAsmThread {
             counter: 0,
-            inner: ThreadInner::new(image, memory),
+            inner: ThreadInner::new(image),
         }
     }
 
@@ -154,10 +154,10 @@ impl Thread for ThreadedAsmThread {
         ops[ops::JIT as usize] = label_addr!("goto_jit");
         ops[ops::LDB as usize] = label_addr!("goto_ldb");
         ops[ops::LDI as usize] = label_addr!("goto_ldi");
-        ops[ops::LDR as usize] = label_addr!("goto_ldr");
-        ops[ops::LOD as usize] = label_addr!("goto_lod");
-        ops[ops::STO as usize] = label_addr!("goto_sto");
         ops[ops::CGT as usize] = label_addr!("goto_cgt");
+        ops[ops::RND as usize] = label_addr!("goto_rnd");
+        ops[ops::DIV as usize] = label_addr!("goto_div");
+        ops[ops::MOD as usize] = label_addr!("goto_mod");
 
         let mut pc = 0;
         let mut opcode = self.inner.fetch(pc);
@@ -199,23 +199,23 @@ impl Thread for ThreadedAsmThread {
             opcode = self.inner.fetch(pc);
         });
 
-        do_and_dispatch!(ops, "goto_ldr", pc, opcode, counter, {
-            pc = self.inner.op_ldr(opcode, pc);
-            opcode = self.inner.fetch(pc);
-        });
-
-        do_and_dispatch!(ops, "goto_lod", pc, opcode, counter, {
-            pc = self.inner.op_lod(opcode, pc);
-            opcode = self.inner.fetch(pc);
-        });
-
-        do_and_dispatch!(ops, "goto_sto", pc, opcode, counter, {
-            pc = self.inner.op_sto(opcode, pc);
-            opcode = self.inner.fetch(pc);
-        });
-
         do_and_dispatch!(ops, "goto_cgt", pc, opcode, counter, {
             pc = self.inner.op_cgt(opcode, pc);
+            opcode = self.inner.fetch(pc);
+        });
+
+        do_and_dispatch!(ops, "goto_rnd", pc, opcode, counter, {
+            pc = self.inner.op_rnd(opcode, pc);
+            opcode = self.inner.fetch(pc);
+        });
+
+        do_and_dispatch!(ops, "goto_div", pc, opcode, counter, {
+            pc = self.inner.op_div(opcode, pc);
+            opcode = self.inner.fetch(pc);
+        });
+
+        do_and_dispatch!(ops, "goto_mod", pc, opcode, counter, {
+            pc = self.inner.op_mod(opcode, pc);
             opcode = self.inner.fetch(pc);
         });
 
@@ -235,8 +235,34 @@ mod bench {
 
 
     #[bench]
-    fn bench_nested_loop(b: &mut Bencher) {
-        let mut thread = ThreadedAsmThread::new(&fixture::nested_loop(), &Vec::new());
+    fn bench_1_nested_loop(b: &mut Bencher) {
+        let mut thread = ThreadedAsmThread::new(&fixture::nested_loop());
+        let mut icount = 0;
+
+        b.iter(|| {
+            thread.run();
+            icount = thread.reset();
+        });
+
+        b.bytes = icount as u64;
+    }
+
+    #[bench]
+    fn bench_2_longer_repetitive(b: &mut Bencher) {
+        let mut thread = ThreadedAsmThread::new(&fixture::longer_repetitive());
+        let mut icount = 0;
+
+        b.iter(|| {
+            thread.run();
+            icount = thread.reset();
+        });
+
+        b.bytes = icount as u64;
+    }
+
+    #[bench]
+    fn bench_3_unpredictable(b: &mut Bencher) {
+        let mut thread = ThreadedAsmThread::new(&fixture::unpredictable());
         let mut icount = 0;
 
         b.iter(|| {

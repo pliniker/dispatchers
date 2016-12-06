@@ -12,13 +12,7 @@
 extern crate test;
 
 
-use vm::{Image, Mem, Thread, ThreadInner, operator, ops};
-
-
-pub enum OpHint {
-    None,
-    ReRoll,
-}
+use vm::{Image, Thread, ThreadInner, operator, ops};
 
 
 pub struct UnrollSwitchThread {
@@ -33,7 +27,6 @@ macro_rules! unroll {
             $counter += 1;
             let opcode = $thread.fetch($pc);
             match operator(opcode) {
-                ops::HLT => break,
                 ops::JMP => { $pc = $thread.op_jmp(opcode, $pc); continue $head },
                 ops::ADD => $pc = $thread.op_add(opcode, $pc),
                 ops::MOV => $pc = $thread.op_mov(opcode, $pc),
@@ -45,10 +38,10 @@ macro_rules! unroll {
                 },
                 ops::LDB => $pc = $thread.op_ldb(opcode, $pc),
                 ops::LDI => $pc = $thread.op_ldi(opcode, $pc),
-                ops::LDR => $pc = $thread.op_ldr(opcode, $pc),
-                ops::LOD => $pc = $thread.op_lod(opcode, $pc),
-                ops::STO => $pc = $thread.op_sto(opcode, $pc),
                 ops::CGT => $pc = $thread.op_cgt(opcode, $pc),
+                ops::RND => $pc = $thread.op_rnd(opcode, $pc),
+                ops::DIV => $pc = $thread.op_div(opcode, $pc),
+                ops::MOD => $pc = $thread.op_mod(opcode, $pc),
                 _ => break
             }
         }
@@ -57,10 +50,10 @@ macro_rules! unroll {
 
 
 impl Thread for UnrollSwitchThread {
-    fn new(image: &Image, memory: &Mem) -> UnrollSwitchThread {
+    fn new(image: &Image) -> UnrollSwitchThread {
         UnrollSwitchThread {
             counter: 0,
-            inner: ThreadInner::new(image, memory)
+            inner: ThreadInner::new(image)
         }
     }
 
@@ -72,22 +65,27 @@ impl Thread for UnrollSwitchThread {
     }
 
     fn run(&mut self) {
+        let mut counter = 0;
         let mut pc = 0;
+
         'restart: loop {
-            unroll!('restart, pc, self.counter, self.inner);
-            unroll!('restart, pc, self.counter, self.inner);
-            unroll!('restart, pc, self.counter, self.inner);
-            unroll!('restart, pc, self.counter, self.inner);
-            unroll!('restart, pc, self.counter, self.inner);
-            unroll!('restart, pc, self.counter, self.inner);
-            unroll!('restart, pc, self.counter, self.inner);
-            unroll!('restart, pc, self.counter, self.inner);
-            unroll!('restart, pc, self.counter, self.inner);
-            unroll!('restart, pc, self.counter, self.inner);
-            unroll!('restart, pc, self.counter, self.inner);
-            unroll!('restart, pc, self.counter, self.inner);
-            unroll!('restart, pc, self.counter, self.inner);
+            unroll!('restart, pc, counter, self.inner);
+            unroll!('restart, pc, counter, self.inner);
+
+            unroll!('restart, pc, counter, self.inner);
+            unroll!('restart, pc, counter, self.inner);
+            unroll!('restart, pc, counter, self.inner);
+            unroll!('restart, pc, counter, self.inner);
+            unroll!('restart, pc, counter, self.inner);
+            unroll!('restart, pc, counter, self.inner);
+            unroll!('restart, pc, counter, self.inner);
+            unroll!('restart, pc, counter, self.inner);
+            unroll!('restart, pc, counter, self.inner);
+            unroll!('restart, pc, counter, self.inner);
+            unroll!('restart, pc, counter, self.inner);
         }
+
+        self.counter = counter;
     }
 }
 
@@ -102,8 +100,34 @@ mod bench {
 
 
     #[bench]
-    fn bench_nested_loop(b: &mut Bencher) {
-        let mut thread = UnrollSwitchThread::new(&fixture::nested_loop(), &Vec::new());
+    fn bench_1_nested_loop(b: &mut Bencher) {
+        let mut thread = UnrollSwitchThread::new(&fixture::nested_loop());
+        let mut icount = 0;
+
+        b.iter(|| {
+            thread.run();
+            icount = thread.reset();
+        });
+
+        b.bytes = icount as u64;
+    }
+
+    #[bench]
+    fn bench_2_longer_repetitive(b: &mut Bencher) {
+        let mut thread = UnrollSwitchThread::new(&fixture::longer_repetitive());
+        let mut icount = 0;
+
+        b.iter(|| {
+            thread.run();
+            icount = thread.reset();
+        });
+
+        b.bytes = icount as u64;
+    }
+
+    #[bench]
+    fn bench_3_unpredictable(b: &mut Bencher) {
+        let mut thread = UnrollSwitchThread::new(&fixture::unpredictable());
         let mut icount = 0;
 
         b.iter(|| {

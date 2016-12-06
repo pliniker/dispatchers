@@ -10,7 +10,7 @@
 extern crate test;
 
 
-use vm::{Image, Mem, Thread, ThreadInner, Opcode, operator, ops};
+use vm::{Image, Thread, ThreadInner, Opcode, operator, ops};
 
 
 pub type Instr = fn(code: &mut ThreadedThread, opcode: Opcode, pc: usize);
@@ -24,11 +24,11 @@ pub struct ThreadedThread {
 
 
 impl Thread for ThreadedThread {
-    fn new(image: &Image, memory: &Mem) -> ThreadedThread {
+    fn new(image: &Image) -> ThreadedThread {
         let mut t = ThreadedThread {
             counter: 0,
             ops: [op_hlt; 32],
-            inner: ThreadInner::new(image, memory)
+            inner: ThreadInner::new(image)
         };
 
         t.ops[ops::HLT as usize] = op_hlt;
@@ -39,10 +39,10 @@ impl Thread for ThreadedThread {
         t.ops[ops::JIT as usize] = op_jit;
         t.ops[ops::LDB as usize] = op_ldb;
         t.ops[ops::LDI as usize] = op_ldi;
-        t.ops[ops::LDR as usize] = op_ldr;
-        t.ops[ops::LOD as usize] = op_lod;
-        t.ops[ops::STO as usize] = op_sto;
         t.ops[ops::CGT as usize] = op_cgt;
+        t.ops[ops::RND as usize] = op_rnd;
+        t.ops[ops::DIV as usize] = op_div;
+        t.ops[ops::MOD as usize] = op_mod;
 
         t
     }
@@ -124,29 +124,29 @@ fn op_ldi(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
 
 
 #[no_mangle]
-fn op_ldr(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
-    let pc = thread.inner.op_ldr(opcode, pc);
-    thread.next(pc)
-}
-
-
-#[no_mangle]
-fn op_lod(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
-    let pc = thread.inner.op_lod(opcode, pc);
-    thread.next(pc)
-}
-
-
-#[no_mangle]
-fn op_sto(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
-    let pc = thread.inner.op_sto(opcode, pc);
-    thread.next(pc)
-}
-
-
-#[no_mangle]
 fn op_cgt(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
-    let pc =thread.inner.op_cgt(opcode, pc);
+    let pc = thread.inner.op_cgt(opcode, pc);
+    thread.next(pc)
+}
+
+
+#[no_mangle]
+fn op_rnd(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+    let pc = thread.inner.op_rnd(opcode, pc);
+    thread.next(pc)
+}
+
+
+#[no_mangle]
+fn op_div(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+    let pc = thread.inner.op_div(opcode, pc);
+    thread.next(pc)
+}
+
+
+#[no_mangle]
+fn op_mod(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+    let pc = thread.inner.op_mod(opcode, pc);
     thread.next(pc)
 }
 
@@ -161,8 +161,34 @@ mod bench {
 
 
     #[bench]
-    fn bench_nested_loop(b: &mut Bencher) {
-        let mut thread = ThreadedThread::new(&fixture::nested_loop(), &Vec::new());
+    fn bench_1_nested_loop(b: &mut Bencher) {
+        let mut thread = ThreadedThread::new(&fixture::nested_loop());
+        let mut icount = 0;
+
+        b.iter(|| {
+            thread.run();
+            icount = thread.reset();
+        });
+
+        b.bytes = icount as u64;
+    }
+
+    #[bench]
+    fn bench_2_longer_repetitive(b: &mut Bencher) {
+        let mut thread = ThreadedThread::new(&fixture::longer_repetitive());
+        let mut icount = 0;
+
+        b.iter(|| {
+            thread.run();
+            icount = thread.reset();
+        });
+
+        b.bytes = icount as u64;
+    }
+
+    #[bench]
+    fn bench_3_unpredictable(b: &mut Bencher) {
+        let mut thread = ThreadedThread::new(&fixture::unpredictable());
         let mut icount = 0;
 
         b.iter(|| {

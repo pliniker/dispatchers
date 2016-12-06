@@ -9,15 +9,6 @@ extern crate test;
 use vm::{Image, Mem, Thread, ThreadInner, Opcode, operator, ops};
 
 
-enum InstrRet {
-    Some(Instr, Opcode, usize),
-    None
-}
-
-
-type Instr = fn(thread: &mut NestedLoopsThread, opcode: Opcode, pc: usize) -> InstrRet;
-
-
 pub struct NestedLoopsThread {
     counter: usize,
     inner: ThreadInner,
@@ -25,10 +16,10 @@ pub struct NestedLoopsThread {
 
 
 impl Thread for NestedLoopsThread {
-    fn new(image: &Image, memory: &Mem) -> NestedLoopsThread {
+    fn new(image: &Image) -> NestedLoopsThread {
         NestedLoopsThread {
             counter: 0,
-            inner: ThreadInner::new(image, memory)
+            inner: ThreadInner::new(image)
         }
     }
 
@@ -164,16 +155,4 @@ mod bench {
     use fixture;
 
 
-    #[bench]
-    fn bench_nested_loop(b: &mut Bencher) {
-        let mut thread = NestedLoopsThread::new(&fixture::nested_loop(), &Vec::new());
-        let mut icount = 0;
-
-        b.iter(|| {
-            thread.run();
-            icount = thread.reset();
-        });
-
-        b.bytes = icount as u64;
-    }
 }

@@ -1,9 +1,10 @@
 
 
 use asm;
-use vm::{Image, Mem, Register, Type, BaseInt};
+use vm::{Image, Register};
 
 
+/// This is good for debugging
 pub fn simple_loop() -> Image {
     let zero: Register = 0;
     let counter: Register = 1;
@@ -23,6 +24,8 @@ pub fn simple_loop() -> Image {
 }
 
 
+/// This test should not slow down a CPU with basic indirect branch prediction.
+/// The loop eendecutes the same instruction sequence repeatedly.
 pub fn nested_loop() -> Image {
     let counter_a: Register = 0;
     let counter_b: Register = 1;
@@ -52,56 +55,158 @@ pub fn nested_loop() -> Image {
 }
 
 
-pub fn bubble_sort() -> Image {
-    let length: Register = 0;
-    let swapped: Register = 1;
-    let n: Register = 2;
-    let i: Register = 3;
-    let j: Register = 4;
-    let iref: Register = 5;
-    let jref: Register = 6;
-    let ival: Register = 7;
-    let jval: Register = 8;
-    let gt: Register = 9;
-    let one: Register = 10;
-    let minus_one: Register = 11;
+/// A test with more instructions but still a predictable pattern
+pub fn longer_repetitive() -> Image {
+    let minusone: Register = 0;
+    let zero: Register = 1;
+
+    let counter_i: Register = 2;
+    let counter_j: Register = 3;
+    let condition: Register = 4;
+
+    let for_j: usize = 3;
+    let for_i: usize = 4;
+    let end_i: usize = 36;
+    let end_j: usize = 40;
 
     vec![
-        asm::ldi(one, 1),                // reg[one] = Integer(1)
-        asm::ldi(minus_one, -1),         // reg[minus_one] = Integer(-1)
-        asm::ldi(length, 0),             // reg[length] = Integer(0)
-        asm::ldr(length, length),        // reg[length] = reg[length] as Reference
-        asm::lod(length, length),        // reg[length] = *reg[length]
-        asm::mov(length, n),             // reg[n] = reg[length]
+        asm::ldi(minusone, -1),
+        asm::ldi(zero, 0),
 
-        // outer
-        asm::ldb(swapped, false),        // reg[swapped] = Boolean(false)
-        asm::ldi(i, 1),                  // reg[i] = Integer(1)
-        asm::ldi(j, 2),                  // reg[j] = Integer(2)
+        // for j in 0..100
+        asm::ldi(counter_j, 10000),
 
-        // compare
-        asm::ldr(i, iref),               // reg[iref] = reg[i] as Reference
-        asm::lod(iref, ival),            // reg[ival] = *reg[iref]
-        asm::ldr(j, jref),               // reg[jref] = reg[j] as Reference
-        asm::lod(jref, jval),            // reg[jval] = *reg[jref]
-        asm::cgt(jval, ival, gt),        // reg[gt] = reg[ival] < reg[jval]
-        asm::jit(gt, 999),               // jump over swap if reg[gt] == true
+        // 3
+        // for i in 0..3000
+        asm::ldi(counter_i, 30),
 
-        // swap
-        asm::sto(jval, iref),            // *reg[iref] = jval
-        asm::sto(ival, jref),            // *reg[jref] = ival
-        asm::ldb(swapped, true),         // reg[swapped] = Boolean(true)
-
-        // iter
-        asm::add(i, one, i),
-        asm::add(j, one, j),
-        // cmp and jump
+        // 4
+        asm::add(counter_i, minusone, counter_i),
+        asm::add(zero, zero, zero),
+        asm::ceq(counter_i, zero, condition),
+        asm::jit(condition, end_i),
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+        // 11
+        asm::add(counter_i, minusone, counter_i),
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+        asm::ceq(counter_i, zero, condition),
+        asm::add(zero, zero, zero),
+        asm::jit(condition, end_i),
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+        // 19
+        asm::add(counter_i, minusone, counter_i),
+        asm::add(zero, zero, zero),
+        asm::ceq(counter_i, zero, condition),
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+        asm::jit(condition, end_i),
+        asm::add(zero, zero, zero),
+        // 26
+        asm::add(counter_i, minusone, counter_i),
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+        asm::ceq(counter_i, zero, condition),
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+        asm::jit(condition, end_i),
+        asm::add(zero, zero, zero),
+        // 35
+        asm::jmp(for_i),
+        // end i
+        asm::add(counter_j, minusone, counter_j),
+        asm::ceq(counter_j, zero, condition),
+        asm::jit(condition, end_j),
+        asm::jmp(for_j),
+        // end j
+        // 40
+        asm::hlt()
     ]
 }
 
 
-pub fn random_integers(length: BaseInt) -> Mem {
+/// An instruction sequence that should be somewhat unpredictable by any branch predictor
+pub fn unpredictable() -> Image {
+    let counter_j: Register = 0;
+    let counter_i: Register = 1;
+    let minusone: Register = 2;
+    let zero: Register = 3;
+    let two: Register = 4;
+    let three: Register = 5;
+    let five: Register = 6;
+    let condition: Register = 7;
+    let random: Register = 8;
+    let acc: Register = 9;
+
+    let for_j: usize = 5;
+    let for_i: usize = 6;
+    let end_i: usize = 30;
+    let end_j: usize = 34;
+    let skip_five: usize = 15;
+    let skip_three: usize = 21;
+    let skip_two: usize = 26;
+
     vec![
-        Type::Integer(length),
+        // 0
+        asm::ldi(zero, 0),
+        asm::ldi(minusone, -1),
+        asm::ldi(two, 2),
+        asm::ldi(three, 3),
+
+        // for_j in 0..10000
+        asm::ldi(counter_j, 1000),
+        // for_j=5
+
+        // for_i in 0..100
+        asm::ldi(counter_i, 100),
+        // for_i=6
+
+        asm::rnd(random, 5),
+
+        asm::modulus(random, five, acc),
+        asm::ceq(acc, five, condition),
+        asm::jit(condition, skip_five),
+
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+
+        // skip_five=15
+        asm::modulus(random, three, acc),
+        asm::ceq(acc, three, condition),
+        asm::jit(condition, skip_three),
+
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+
+        // skip_three=21
+        asm::modulus(random, two, acc),
+        asm::ceq(acc, two, condition),
+        asm::jit(condition, skip_two),
+
+        asm::add(zero, zero, zero),
+        asm::add(zero, zero, zero),
+
+        // skip_two=26
+        asm::add(counter_i, minusone, counter_i),
+        asm::ceq(counter_i, zero, condition),
+        asm::jit(condition, end_i),
+        asm::jmp(for_i),
+
+        // end_i=30
+        asm::add(counter_j, minusone, counter_j),
+        asm::ceq(counter_j, zero, condition),
+        asm::jit(condition, end_j),
+        asm::jmp(for_j),
+
+        // end_j=34
+        asm::hlt()
     ]
 }
