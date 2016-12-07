@@ -38,14 +38,14 @@ op_jmp:
 	ldr	x30, [sp], #16
 	br	x3
 .LBB1_3:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
+	adrp	x0, panic_bounds_check_loc.7
+	add	x0, x0, :lo12:panic_bounds_check_loc.7
 	mov	 x1, x2
 	mov	 x2, x8
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .LBB1_4:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
+	adrp	x0, panic_bounds_check_loc.F
+	add	x0, x0, :lo12:panic_bounds_check_loc.F
 	orr	w2, wzr, #0x20
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .Lfunc_end1:
@@ -63,29 +63,29 @@ op_add:
 .Ltmp3:
 	.cfi_offset w30, -16
 	ubfx	w8, w1, #8, #8
-	add	x9, x0, w8, uxtw #4
+	add	x9, x0, w8, uxtw #3
 	ldrb	w11, [x9, #288]
 	ubfx	w10, w1, #16, #8
 	lsr	w9, w1, #24
 	cmp		w11, #1
 	b.ne	.LBB2_3
-	add	x11, x0, x10, lsl #4
+	add	x11, x0, x10, lsl #3
 	ldrb	w11, [x11, #288]
 	cmp		w11, #1
 	b.ne	.LBB2_3
 	add	x11, x0, #288
-	add	x8, x11, x8, lsl #4
-	add	x10, x11, x10, lsl #4
+	add	x8, x11, x8, lsl #3
+	add	x10, x11, x10, lsl #3
 	ldr	w8, [x8, #4]
 	ldr	w10, [x10, #4]
 	orr	w12, wzr, #0x1
-	add	x9, x11, x9, lsl #4
+	add	x9, x11, x9, lsl #3
 	strb		w12, [x9]
 	add		w8, w10, w8
 	str	w8, [x9, #4]
 	b	.LBB2_4
 .LBB2_3:
-	add	x8, x0, x9, lsl #4
+	add	x8, x0, x9, lsl #3
 	strb	wzr, [x8, #288]
 .LBB2_4:
 	ldr		x9, [x0]
@@ -106,14 +106,14 @@ op_add:
 	ldr	x30, [sp], #16
 	br	x3
 .LBB2_7:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
+	adrp	x0, panic_bounds_check_loc.7
+	add	x0, x0, :lo12:panic_bounds_check_loc.7
 	mov	 x1, x2
 	mov	 x2, x8
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .LBB2_8:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
+	adrp	x0, panic_bounds_check_loc.F
+	add	x0, x0, :lo12:panic_bounds_check_loc.F
 	orr	w2, wzr, #0x20
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .Lfunc_end2:
@@ -132,10 +132,10 @@ op_mov:
 	.cfi_offset w30, -16
 	ubfx	w8, w1, #8, #8
 	add	x9, x0, #288
-	ldr	q0, [x9, w8, uxtw #4]
-	ubfx	w8, w1, #16, #8
+	ldr	x8, [x9, w8, uxtw #3]
+	ubfx	w10, w1, #16, #8
 	add	x2, x2, #1
-	str	q0, [x9, w8, uxtw #4]
+	str	x8, [x9, w10, uxtw #3]
 	ldr		x9, [x0]
 	ldr	x8, [x0, #280]
 	add	x9, x9, #1
@@ -153,14 +153,14 @@ op_mov:
 	ldr	x30, [sp], #16
 	br	x3
 .LBB3_3:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
+	adrp	x0, panic_bounds_check_loc.7
+	add	x0, x0, :lo12:panic_bounds_check_loc.7
 	mov	 x1, x2
 	mov	 x2, x8
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .LBB3_4:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
+	adrp	x0, panic_bounds_check_loc.F
+	add	x0, x0, :lo12:panic_bounds_check_loc.F
 	orr	w2, wzr, #0x20
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .Lfunc_end3:
@@ -179,60 +179,47 @@ op_ceq:
 	.cfi_offset w30, -16
 	ubfx	w9, w1, #8, #8
 	add	x11, x0, #288
-	lsl	x8, x9, #4
+	lsl	x8, x9, #3
 	ldrb		w12, [x11, x8]
 	ubfx	w10, w1, #16, #8
 	lsr	w8, w1, #24
-	add	x11, x11, w10, uxtw #4
+	add	x11, x11, w10, uxtw #3
 	and	w13, w12, #0x3
 	cmp		w13, #1
-	b.eq	.LBB4_5
+	b.eq	.LBB4_4
 	cmp		w12, #2
-	b.eq	.LBB4_7
-	cmp		w12, #3
-	b.ne	.LBB4_10
-	ldrb		w11, [x11]
-	cmp		w11, #3
-	b.ne	.LBB4_9
-	add	x11, x0, #288
-	add	x9, x11, x9, lsl #4
-	add	x10, x11, x10, lsl #4
-	ldr	x9, [x9, #8]
-	ldr	x10, [x10, #8]
-	cmp		x9, x10
-	b	.LBB4_11
-.LBB4_5:
-	ldrb		w11, [x11]
-	cmp		w11, #1
-	b.ne	.LBB4_9
-	add	x11, x0, #288
-	add	x9, x11, x9, lsl #4
-	add	x10, x11, x10, lsl #4
-	ldr	w9, [x9, #4]
-	ldr	w10, [x10, #4]
-	cmp		w9, w10
-	b	.LBB4_11
-.LBB4_7:
+	b.ne	.LBB4_7
 	ldrb		w11, [x11]
 	cmp		w11, #2
 	b.ne	.LBB4_9
 	add	x11, x0, #288
-	add	x9, x11, x9, lsl #4
-	add	x10, x11, x10, lsl #4
+	add	x9, x11, x9, lsl #3
+	add	x10, x11, x10, lsl #3
 	ldrb	w9, [x9, #1]
 	ldrb	w10, [x10, #1]
+	b	.LBB4_6
+.LBB4_4:
+	ldrb		w11, [x11]
+	cmp		w11, #1
+	b.ne	.LBB4_9
+	add	x11, x0, #288
+	add	x9, x11, x9, lsl #3
+	add	x10, x11, x10, lsl #3
+	ldr	w9, [x9, #4]
+	ldr	w10, [x10, #4]
+.LBB4_6:
 	cmp		w9, w10
-	b	.LBB4_11
-.LBB4_9:
-	mov	 w9, wzr
-	b	.LBB4_12
-.LBB4_10:
+	b	.LBB4_8
+.LBB4_7:
 	ldrb		w9, [x11]
 	cmp		w9, #0
-.LBB4_11:
+.LBB4_8:
 	cset	 w9, eq
-.LBB4_12:
-	add	x8, x0, x8, lsl #4
+	b	.LBB4_10
+.LBB4_9:
+	mov	 w9, wzr
+.LBB4_10:
+	add	x8, x0, x8, lsl #3
 	orr	w10, wzr, #0x2
 	strb	w10, [x8, #288]
 	strb	w9, [x8, #289]
@@ -242,26 +229,26 @@ op_ceq:
 	add	x9, x9, #1
 	str		x9, [x0]
 	cmp		x8, x2
-	b.ls	.LBB4_15
+	b.ls	.LBB4_13
 	ldr	x8, [x0, #264]
 	ldr	w8, [x8, x2, lsl #2]
 	and	w1, w8, #0xff
 	cmp		w1, #32
-	b.hs	.LBB4_16
+	b.hs	.LBB4_14
 	add	x9, x0, x1, lsl #3
 	ldr	x3, [x9, #8]
 	mov	 w1, w8
 	ldr	x30, [sp], #16
 	br	x3
-.LBB4_15:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
+.LBB4_13:
+	adrp	x0, panic_bounds_check_loc.7
+	add	x0, x0, :lo12:panic_bounds_check_loc.7
 	mov	 x1, x2
 	mov	 x2, x8
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.LBB4_16:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
+.LBB4_14:
+	adrp	x0, panic_bounds_check_loc.F
+	add	x0, x0, :lo12:panic_bounds_check_loc.F
 	orr	w2, wzr, #0x20
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .Lfunc_end4:
@@ -279,11 +266,11 @@ op_jit:
 .Ltmp9:
 	.cfi_offset w30, -16
 	ubfx	w8, w1, #8, #8
-	add	x9, x0, w8, uxtw #4
+	add	x9, x0, w8, uxtw #3
 	ldrb	w9, [x9, #288]
 	cmp		w9, #2
 	b.ne	.LBB5_3
-	add	x8, x0, x8, lsl #4
+	add	x8, x0, x8, lsl #3
 	ldrb	w8, [x8, #289]
 	cbz	w8, .LBB5_3
 	lsr	w2, w1, #16
@@ -308,14 +295,14 @@ op_jit:
 	ldr	x30, [sp], #16
 	br	x3
 .LBB5_7:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
+	adrp	x0, panic_bounds_check_loc.7
+	add	x0, x0, :lo12:panic_bounds_check_loc.7
 	mov	 x1, x2
 	mov	 x2, x8
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .LBB5_8:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
+	adrp	x0, panic_bounds_check_loc.F
+	add	x0, x0, :lo12:panic_bounds_check_loc.F
 	orr	w2, wzr, #0x20
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .Lfunc_end5:
@@ -335,7 +322,7 @@ op_ldb:
 	ubfx	w8, w1, #8, #8
 	orr	w9, wzr, #0x2
 	ubfx	w10, w1, #16, #1
-	add	x8, x0, w8, uxtw #4
+	add	x8, x0, w8, uxtw #3
 	strb	w9, [x8, #288]
 	strb	w10, [x8, #289]
 	ldr		x9, [x0]
@@ -356,14 +343,14 @@ op_ldb:
 	ldr	x30, [sp], #16
 	br	x3
 .LBB6_3:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
+	adrp	x0, panic_bounds_check_loc.7
+	add	x0, x0, :lo12:panic_bounds_check_loc.7
 	mov	 x1, x2
 	mov	 x2, x8
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .LBB6_4:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
+	adrp	x0, panic_bounds_check_loc.F
+	add	x0, x0, :lo12:panic_bounds_check_loc.F
 	orr	w2, wzr, #0x20
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .Lfunc_end6:
@@ -383,7 +370,7 @@ op_ldi:
 	ubfx	w8, w1, #8, #8
 	asr	w9, w1, #16
 	orr	w10, wzr, #0x1
-	add	x8, x0, w8, uxtw #4
+	add	x8, x0, w8, uxtw #3
 	strb	w10, [x8, #288]
 	str	w9, [x8, #292]
 	ldr		x9, [x0]
@@ -404,208 +391,18 @@ op_ldi:
 	ldr	x30, [sp], #16
 	br	x3
 .LBB7_3:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
+	adrp	x0, panic_bounds_check_loc.7
+	add	x0, x0, :lo12:panic_bounds_check_loc.7
 	mov	 x1, x2
 	mov	 x2, x8
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .LBB7_4:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
+	adrp	x0, panic_bounds_check_loc.F
+	add	x0, x0, :lo12:panic_bounds_check_loc.F
 	orr	w2, wzr, #0x20
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
 .Lfunc_end7:
 	.size	op_ldi, .Lfunc_end7-op_ldi
-	.cfi_endproc
-
-	.section	.text.op_ldr,"ax",@progbits
-	.p2align	2
-	.type	op_ldr,@function
-op_ldr:
-	.cfi_startproc
-	str	x30, [sp, #-16]!
-.Ltmp14:
-	.cfi_def_cfa_offset 16
-.Ltmp15:
-	.cfi_offset w30, -16
-	ubfx	w9, w1, #8, #8
-	add	x8, x0, w9, uxtw #4
-	ldrb	w10, [x8, #288]
-	ubfx	w8, w1, #16, #8
-	cmp		w10, #1
-	b.ne	.LBB8_2
-	add	x10, x0, #288
-	add	x9, x10, x9, lsl #4
-	ldrsw	x9, [x9, #4]
-	add	x10, x10, x8, lsl #4
-	str	x9, [x10, #8]
-	orr	w9, wzr, #0x3
-	b	.LBB8_3
-.LBB8_2:
-	mov	 w9, wzr
-.LBB8_3:
-	add	x8, x0, x8, lsl #4
-	strb	w9, [x8, #288]
-	ldr		x9, [x0]
-	ldr	x8, [x0, #280]
-	add	x2, x2, #1
-	add	x9, x9, #1
-	str		x9, [x0]
-	cmp		x8, x2
-	b.ls	.LBB8_6
-	ldr	x8, [x0, #264]
-	ldr	w8, [x8, x2, lsl #2]
-	and	w1, w8, #0xff
-	cmp		w1, #32
-	b.hs	.LBB8_7
-	add	x9, x0, x1, lsl #3
-	ldr	x3, [x9, #8]
-	mov	 w1, w8
-	ldr	x30, [sp], #16
-	br	x3
-.LBB8_6:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
-	mov	 x1, x2
-	mov	 x2, x8
-	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.LBB8_7:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
-	orr	w2, wzr, #0x20
-	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.Lfunc_end8:
-	.size	op_ldr, .Lfunc_end8-op_ldr
-	.cfi_endproc
-
-	.section	.text.op_lod,"ax",@progbits
-	.p2align	2
-	.type	op_lod,@function
-op_lod:
-	.cfi_startproc
-	str	x30, [sp, #-16]!
-.Ltmp16:
-	.cfi_def_cfa_offset 16
-.Ltmp17:
-	.cfi_offset w30, -16
-	ubfx	w8, w1, #8, #8
-	add	x9, x0, w8, uxtw #4
-	ldrb	w10, [x9, #288]
-	ubfx	w9, w1, #16, #8
-	cmp		w10, #3
-	b.ne	.LBB9_3
-	add	x8, x0, x8, lsl #4
-	ldr	x1, [x8, #296]
-	ldr	x8, [x0, #4400]
-	cmp		x8, x1
-	b.ls	.LBB9_8
-	ldr	x8, [x0, #4384]
-	ldr	q0, [x8, x1, lsl #4]
-	add	x8, x0, x9, lsl #4
-	str	q0, [x8, #288]
-.LBB9_3:
-	ldr		x9, [x0]
-	ldr	x8, [x0, #280]
-	add	x2, x2, #1
-	add	x9, x9, #1
-	str		x9, [x0]
-	cmp		x8, x2
-	b.ls	.LBB9_6
-	ldr	x8, [x0, #264]
-	ldr	w8, [x8, x2, lsl #2]
-	and	w1, w8, #0xff
-	cmp		w1, #32
-	b.hs	.LBB9_7
-	add	x9, x0, x1, lsl #3
-	ldr	x3, [x9, #8]
-	mov	 w1, w8
-	ldr	x30, [sp], #16
-	br	x3
-.LBB9_6:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
-	mov	 x1, x2
-	mov	 x2, x8
-	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.LBB9_7:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
-	orr	w2, wzr, #0x20
-	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.LBB9_8:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
-	mov	 x2, x8
-	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.Lfunc_end9:
-	.size	op_lod, .Lfunc_end9-op_lod
-	.cfi_endproc
-
-	.section	.text.op_sto,"ax",@progbits
-	.p2align	2
-	.type	op_sto,@function
-op_sto:
-	.cfi_startproc
-	sub	sp, sp, #32
-	str	x30, [sp, #16]
-.Ltmp18:
-	.cfi_def_cfa_offset 32
-.Ltmp19:
-	.cfi_offset w30, -16
-	ubfx	w8, w1, #16, #8
-	add	x9, x0, w8, uxtw #4
-	ldrb	w9, [x9, #288]
-	cmp		w9, #3
-	b.ne	.LBB10_3
-	ubfx	w9, w1, #8, #8
-	add	x10, x0, #288
-	ldr	q0, [x10, w9, uxtw #4]
-	add	x8, x10, x8, lsl #4
-	ldr	x1, [x8, #8]
-	str		q0, [sp]
-	ldr	x8, [x0, #4400]
-	cmp		x8, x1
-	b.ls	.LBB10_8
-	ldr	x8, [x0, #4384]
-	ldr		q0, [sp]
-	str	q0, [x8, x1, lsl #4]
-.LBB10_3:
-	ldr		x9, [x0]
-	ldr	x8, [x0, #280]
-	add	x2, x2, #1
-	add	x9, x9, #1
-	str		x9, [x0]
-	cmp		x8, x2
-	b.ls	.LBB10_6
-	ldr	x8, [x0, #264]
-	ldr	w8, [x8, x2, lsl #2]
-	and	w1, w8, #0xff
-	cmp		w1, #32
-	b.hs	.LBB10_7
-	add	x9, x0, x1, lsl #3
-	ldr	x3, [x9, #8]
-	ldr	x30, [sp, #16]
-	mov	 w1, w8
-	add	sp, sp, #32
-	br	x3
-.LBB10_6:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
-	mov	 x1, x2
-	mov	 x2, x8
-	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.LBB10_7:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
-	orr	w2, wzr, #0x20
-	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.LBB10_8:
-	adrp	x0, panic_bounds_check_loc.3
-	add	x0, x0, :lo12:panic_bounds_check_loc.3
-	mov	 x2, x8
-	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.Lfunc_end10:
-	.size	op_sto, .Lfunc_end10-op_sto
 	.cfi_endproc
 
 	.section	.text.op_cgt,"ax",@progbits
@@ -614,123 +411,337 @@ op_sto:
 op_cgt:
 	.cfi_startproc
 	str	x30, [sp, #-16]!
-.Ltmp20:
+.Ltmp14:
 	.cfi_def_cfa_offset 16
-.Ltmp21:
+.Ltmp15:
 	.cfi_offset w30, -16
 	ubfx	w9, w1, #8, #8
-	add	x8, x0, w9, uxtw #4
+	add	x8, x0, w9, uxtw #3
 	ldrb	w11, [x8, #288]
 	ubfx	w10, w1, #16, #8
 	lsr	w8, w1, #24
 	cmp		w11, #1
-	b.ne	.LBB11_3
-	add	x11, x0, x10, lsl #4
+	b.ne	.LBB8_3
+	add	x11, x0, x10, lsl #3
 	ldrb	w11, [x11, #288]
 	cmp		w11, #1
-	b.ne	.LBB11_3
+	b.ne	.LBB8_3
 	add	x11, x0, #288
-	add	x9, x11, x9, lsl #4
-	add	x10, x11, x10, lsl #4
+	add	x9, x11, x9, lsl #3
+	add	x10, x11, x10, lsl #3
 	ldr	w9, [x9, #4]
 	ldr	w10, [x10, #4]
 	orr	w12, wzr, #0x2
-	add	x8, x11, x8, lsl #4
+	add	x8, x11, x8, lsl #3
 	strb		w12, [x8]
 	cmp		w9, w10
 	cset	 w9, gt
 	strb	w9, [x8, #1]
-	b	.LBB11_4
-.LBB11_3:
-	add	x8, x0, x8, lsl #4
+	b	.LBB8_4
+.LBB8_3:
+	add	x8, x0, x8, lsl #3
 	strb	wzr, [x8, #288]
-.LBB11_4:
+.LBB8_4:
 	ldr		x9, [x0]
 	ldr	x8, [x0, #280]
 	add	x2, x2, #1
 	add	x9, x9, #1
 	str		x9, [x0]
 	cmp		x8, x2
-	b.ls	.LBB11_7
+	b.ls	.LBB8_7
 	ldr	x8, [x0, #264]
 	ldr	w8, [x8, x2, lsl #2]
 	and	w1, w8, #0xff
 	cmp		w1, #32
-	b.hs	.LBB11_8
+	b.hs	.LBB8_8
 	add	x9, x0, x1, lsl #3
 	ldr	x3, [x9, #8]
 	mov	 w1, w8
 	ldr	x30, [sp], #16
 	br	x3
-.LBB11_7:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
+.LBB8_7:
+	adrp	x0, panic_bounds_check_loc.7
+	add	x0, x0, :lo12:panic_bounds_check_loc.7
 	mov	 x1, x2
 	mov	 x2, x8
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.LBB11_8:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
+.LBB8_8:
+	adrp	x0, panic_bounds_check_loc.F
+	add	x0, x0, :lo12:panic_bounds_check_loc.F
 	orr	w2, wzr, #0x20
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.Lfunc_end11:
-	.size	op_cgt, .Lfunc_end11-op_cgt
+.Lfunc_end8:
+	.size	op_cgt, .Lfunc_end8-op_cgt
 	.cfi_endproc
 
-	.section	.text.op_addvn,"ax",@progbits
+	.section	.text.op_rnd,"ax",@progbits
 	.p2align	2
-	.type	op_addvn,@function
-op_addvn:
+	.type	op_rnd,@function
+op_rnd:
+	.cfi_startproc
+	sub	sp, sp, #64
+	stp	x23, x22, [sp, #16]
+	stp	x21, x20, [sp, #32]
+	stp	x19, x30, [sp, #48]
+.Ltmp16:
+	.cfi_def_cfa_offset 64
+.Ltmp17:
+	.cfi_offset w30, -8
+.Ltmp18:
+	.cfi_offset w19, -16
+.Ltmp19:
+	.cfi_offset w20, -24
+.Ltmp20:
+	.cfi_offset w21, -32
+.Ltmp21:
+	.cfi_offset w22, -40
+.Ltmp22:
+	.cfi_offset w23, -48
+	mov	 x20, x2
+	mov	 x19, x0
+	ubfx	w22, w1, #8, #8
+	asr	w1, w1, #16
+	cmp		w1, #0
+	b.le	.LBB9_9
+	mov	 x8, sp
+	mov	 w0, wzr
+	add	x21, x19, #2336
+	bl	_ZN63_$LT$i32$u20$as$u20$rand..distributions..range..SampleRange$GT$15construct_range17h075819428406b5c5E
+	ldr	w23, [sp, #8]
+	ldr	x8, [x19, #2464]
+.LBB9_2:
+	cmp		x8, #16
+	b.ne	.LBB9_4
+	mov	 x0, x21
+	bl	_ZN4rand6chacha9ChaChaRng6update17hc72718d7582c325dE
+	ldr	x8, [x19, #2464]
+.LBB9_4:
+	and	x9, x8, #0xf
+	add	x9, x19, x9, lsl #2
+	ldr	w9, [x9, #2336]
+	add	x8, x8, #1
+	str	x8, [x19, #2464]
+	cmp		w9, w23
+	b.hs	.LBB9_2
+	ldr	w8, [sp, #4]
+	cbz	w8, .LBB9_10
+	ldr		w10, [sp]
+	udiv	w11, w9, w8
+	msub	w8, w11, w8, w9
+	add	x12, x19, x22, lsl #3
+	orr	w13, wzr, #0x1
+	add		w8, w8, w10
+	strb	w13, [x12, #288]
+	str	w8, [x12, #292]
+	ldr		x9, [x19]
+	ldr	x8, [x19, #280]
+	add	x2, x20, #1
+	add	x9, x9, #1
+	str		x9, [x19]
+	cmp		x8, x2
+	b.ls	.LBB9_11
+	ldr	x8, [x19, #264]
+	ldr	w8, [x8, x2, lsl #2]
+	and	w1, w8, #0xff
+	cmp		w1, #32
+	b.hs	.LBB9_12
+	add	x9, x19, x1, lsl #3
+	ldr	x3, [x9, #8]
+	mov	 x0, x19
+	ldp	x19, x30, [sp, #48]
+	ldp	x21, x20, [sp, #32]
+	ldp	x23, x22, [sp, #16]
+	mov	 w1, w8
+	add	sp, sp, #64
+	br	x3
+.LBB9_9:
+	adrp	x0, :got:_ZN4rand3Rng9gen_range14_MSG_FILE_LINE17hc4b99005c913875eE
+	ldr	x0, [x0, :got_lo12:_ZN4rand3Rng9gen_range14_MSG_FILE_LINE17hc4b99005c913875eE]
+	bl	_ZN4core9panicking5panic17h194ce5d68a8f28a1E
+.LBB9_10:
+	adrp	x0, panic_loc.5
+	add	x0, x0, :lo12:panic_loc.5
+	bl	_ZN4core9panicking5panic17h194ce5d68a8f28a1E
+.LBB9_11:
+	adrp	x0, panic_bounds_check_loc.7
+	add	x0, x0, :lo12:panic_bounds_check_loc.7
+	mov	 x1, x2
+	mov	 x2, x8
+	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
+.LBB9_12:
+	adrp	x0, panic_bounds_check_loc.F
+	add	x0, x0, :lo12:panic_bounds_check_loc.F
+	orr	w2, wzr, #0x20
+	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
+.Lfunc_end9:
+	.size	op_rnd, .Lfunc_end9-op_rnd
+	.cfi_endproc
+
+	.section	.text.op_div,"ax",@progbits
+	.p2align	2
+	.type	op_div,@function
+op_div:
 	.cfi_startproc
 	str	x30, [sp, #-16]!
-.Ltmp22:
-	.cfi_def_cfa_offset 16
 .Ltmp23:
+	.cfi_def_cfa_offset 16
+.Ltmp24:
 	.cfi_offset w30, -16
-	ubfx	w8, w1, #8, #8
-	add	x9, x0, w8, uxtw #4
-	ldrb	w10, [x9, #288]
-	cmp		w10, #1
-	b.ne	.LBB12_2
-	add	x8, x0, x8, lsl #4
-	ldr	w9, [x8, #292]
-	add	w9, w9, w1, asr #16
+	ubfx	w9, w1, #8, #8
+	add	x8, x0, w9, uxtw #3
+	ldrb	w11, [x8, #288]
+	ubfx	w10, w1, #16, #8
+	lsr	w8, w1, #24
+	cmp		w11, #1
+	b.ne	.LBB10_6
+	add	x11, x0, #288
+	lsl	x12, x10, #3
+	ldrb		w12, [x11, x12]
+	cmp		w12, #1
+	b.ne	.LBB10_6
+	add	x10, x0, x10, lsl #3
+	ldr	w10, [x10, #292]
+	cbz	w10, .LBB10_12
+	add	x9, x11, x9, lsl #3
+	ldr	w9, [x9, #4]
+	orr	w11, wzr, #0x80000000
+	cmp		w9, w11
+	b.ne	.LBB10_5
+	cmn		w10, #1
+	b.eq	.LBB10_13
+.LBB10_5:
+	sdiv	w9, w9, w10
+	add	x8, x0, x8, lsl #3
+	orr	w10, wzr, #0x1
+	strb	w10, [x8, #288]
 	str	w9, [x8, #292]
-	b	.LBB12_3
-.LBB12_2:
-	add	x8, x9, #288
-	strb		wzr, [x8]
-.LBB12_3:
+	b	.LBB10_7
+.LBB10_6:
+	add	x8, x0, x8, lsl #3
+	strb	wzr, [x8, #288]
+.LBB10_7:
 	ldr		x9, [x0]
 	ldr	x8, [x0, #280]
 	add	x2, x2, #1
 	add	x9, x9, #1
 	str		x9, [x0]
 	cmp		x8, x2
-	b.ls	.LBB12_6
+	b.ls	.LBB10_10
 	ldr	x8, [x0, #264]
 	ldr	w8, [x8, x2, lsl #2]
 	and	w1, w8, #0xff
 	cmp		w1, #32
-	b.hs	.LBB12_7
+	b.hs	.LBB10_11
 	add	x9, x0, x1, lsl #3
 	ldr	x3, [x9, #8]
 	mov	 w1, w8
 	ldr	x30, [sp], #16
 	br	x3
-.LBB12_6:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
+.LBB10_10:
+	adrp	x0, panic_bounds_check_loc.7
+	add	x0, x0, :lo12:panic_bounds_check_loc.7
 	mov	 x1, x2
 	mov	 x2, x8
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.LBB12_7:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
+.LBB10_11:
+	adrp	x0, panic_bounds_check_loc.F
+	add	x0, x0, :lo12:panic_bounds_check_loc.F
 	orr	w2, wzr, #0x20
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.Lfunc_end12:
-	.size	op_addvn, .Lfunc_end12-op_addvn
+.LBB10_12:
+	adrp	x0, panic_loc.s
+	add	x0, x0, :lo12:panic_loc.s
+	bl	_ZN4core9panicking5panic17h194ce5d68a8f28a1E
+.LBB10_13:
+	adrp	x0, panic_loc.u
+	add	x0, x0, :lo12:panic_loc.u
+	bl	_ZN4core9panicking5panic17h194ce5d68a8f28a1E
+.Lfunc_end10:
+	.size	op_div, .Lfunc_end10-op_div
+	.cfi_endproc
+
+	.section	.text.op_mod,"ax",@progbits
+	.p2align	2
+	.type	op_mod,@function
+op_mod:
+	.cfi_startproc
+	str	x30, [sp, #-16]!
+.Ltmp25:
+	.cfi_def_cfa_offset 16
+.Ltmp26:
+	.cfi_offset w30, -16
+	ubfx	w9, w1, #8, #8
+	add	x8, x0, w9, uxtw #3
+	ldrb	w11, [x8, #288]
+	ubfx	w10, w1, #16, #8
+	lsr	w8, w1, #24
+	cmp		w11, #1
+	b.ne	.LBB11_6
+	add	x11, x0, #288
+	lsl	x12, x10, #3
+	ldrb		w12, [x11, x12]
+	cmp		w12, #1
+	b.ne	.LBB11_6
+	add	x10, x0, x10, lsl #3
+	ldr	w10, [x10, #292]
+	cbz	w10, .LBB11_12
+	add	x9, x11, x9, lsl #3
+	ldr	w9, [x9, #4]
+	orr	w11, wzr, #0x80000000
+	cmp		w9, w11
+	b.ne	.LBB11_5
+	cmn		w10, #1
+	b.eq	.LBB11_13
+.LBB11_5:
+	sdiv	w11, w9, w10
+	add	x8, x0, x8, lsl #3
+	orr	w12, wzr, #0x1
+	msub	w9, w11, w10, w9
+	strb	w12, [x8, #288]
+	str	w9, [x8, #292]
+	b	.LBB11_7
+.LBB11_6:
+	add	x8, x0, x8, lsl #3
+	strb	wzr, [x8, #288]
+.LBB11_7:
+	ldr		x9, [x0]
+	ldr	x8, [x0, #280]
+	add	x2, x2, #1
+	add	x9, x9, #1
+	str		x9, [x0]
+	cmp		x8, x2
+	b.ls	.LBB11_10
+	ldr	x8, [x0, #264]
+	ldr	w8, [x8, x2, lsl #2]
+	and	w1, w8, #0xff
+	cmp		w1, #32
+	b.hs	.LBB11_11
+	add	x9, x0, x1, lsl #3
+	ldr	x3, [x9, #8]
+	mov	 w1, w8
+	ldr	x30, [sp], #16
+	br	x3
+.LBB11_10:
+	adrp	x0, panic_bounds_check_loc.7
+	add	x0, x0, :lo12:panic_bounds_check_loc.7
+	mov	 x1, x2
+	mov	 x2, x8
+	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
+.LBB11_11:
+	adrp	x0, panic_bounds_check_loc.F
+	add	x0, x0, :lo12:panic_bounds_check_loc.F
+	orr	w2, wzr, #0x20
+	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
+.LBB11_12:
+	adrp	x0, panic_loc.z
+	add	x0, x0, :lo12:panic_loc.z
+	bl	_ZN4core9panicking5panic17h194ce5d68a8f28a1E
+.LBB11_13:
+	adrp	x0, panic_loc.B
+	add	x0, x0, :lo12:panic_loc.B
+	bl	_ZN4core9panicking5panic17h194ce5d68a8f28a1E
+.Lfunc_end11:
+	.size	op_mod, .Lfunc_end11-op_mod
 	.cfi_endproc
 
 	.section	.text._ZN4main4main17h7409f745183f989cE,"ax",@progbits
@@ -741,238 +752,255 @@ _ZN4main4main17h7409f745183f989cE:
 	.cfi_startproc
 	.cfi_personality 156, DW.ref.rust_eh_personality
 	.cfi_lsda 28, .Lexception0
-	stp	x28, x20, [sp, #-32]!
-	stp	x19, x30, [sp, #16]
-	sub	sp, sp, #2, lsl #12
-	sub	sp, sp, #336
-.Ltmp34:
-	.cfi_def_cfa_offset 8560
-.Ltmp35:
+	str	x28, [sp, #-48]!
+	stp	x21, x20, [sp, #16]
+	stp	x19, x30, [sp, #32]
+	sub	sp, sp, #1, lsl #12
+	sub	sp, sp, #704
+.Ltmp42:
+	.cfi_def_cfa_offset 4848
+.Ltmp43:
 	.cfi_offset w30, -8
-.Ltmp36:
+.Ltmp44:
 	.cfi_offset w19, -16
-.Ltmp37:
+.Ltmp45:
 	.cfi_offset w20, -24
-.Ltmp38:
-	.cfi_offset w28, -32
-	mov	w0, #52
+.Ltmp46:
+	.cfi_offset w21, -32
+.Ltmp47:
+	.cfi_offset w28, -48
+	orr	w0, wzr, #0x20
 	orr	w1, wzr, #0x4
 	bl	__rust_allocate
 	mov	 x19, x0
-	cbz	x19, .LBB13_11
-	mov	x10, #28147497671065600
-	mov	x9, #-281474976710656
-	movk	x10, #263, lsl #32
-	movk	x9, #519, lsl #32
-	movk	x10, #10000, lsl #16
-	mov	w12, #67305472
-	movk	x9, #775
-	movk	x10, #7
-	mov	w11, #16908288
-	movk	w12, #4
-	mov	w13, #524288
-	movk	w11, #258
-	movk	w13, #1029
-	mov	w14, #196608
-	stp		x9, x10, [x19]
-	add	w9, w12, #256
-	movk	w14, #1
-	add	x8, sp, #8
-	stp	w11, w9, [x19, #16]
-	add	w9, w13, #64, lsl #12
-	mov	w15, #131074
-	add	w10, w14, #16, lsl #12
-	str	w9, [x19, #40]
-	add	x9, x8, #1, lsl #12
-	stp	w14, wzr, [x19, #44]
-	stp	w15, w12, [x19, #32]
-	stp	w13, w10, [x19, #24]
-.LBB13_2:
-	add	x30, sp, #2, lsl #12
-	add	x30, x30, #72
-	ldur	x10, [x30, #255]
-	ldr	x11, [sp, #8512]
-	strb		wzr, [x8]
-	str	x10, [x8, #8]
-	stur	x11, [x8, #1]
+	cbz	x19, .LBB12_11
+	mov	x9, #72620543991349248
+	mov	x10, #1970324836974592
+	mov	x8, #-281474976710656
+	movk	x9, #257, lsl #32
+	movk	x10, #772, lsl #32
+	movk	x8, #518, lsl #32
+	movk	x9, #42, lsl #16
+	movk	x10, #768, lsl #16
+	mov	x11, #60129542144
+	movk	x8, #6
+	movk	x9, #262
+	movk	x10, #259
+	movk	x11, #3, lsl #16
+	stp		x8, x9, [x19]
+	stp	x10, x11, [x19, #16]
+.Ltmp27:
+	adrp	x0, ref.a
+	add	x8, sp, #1, lsl #12
+	add	x0, x0, :lo12:ref.a
+	add	x8, x8, #568
+	orr	w1, wzr, #0x4
+	bl	_ZN97_$LT$rand..chacha..ChaChaRng$u20$as$u20$rand..SeedableRng$LT$$RF$$u27$a$u20$$u5b$u32$u5d$$GT$$GT$9from_seed17h8ffc71e927c66de3E
+.Ltmp28:
+	orr	w0, wzr, #0x20
+	orr	w1, wzr, #0x4
+	bl	__rust_allocate
+	mov	 x20, x0
+	cbz	x20, .LBB12_13
+	ldp		w9, w10, [x19]
+	ldp	w11, w12, [x19, #8]
+	mov	 x8, xzr
+	stp		w9, w10, [x20]
+	ldp	w9, w10, [x19, #16]
+	stp	w11, w12, [x20, #8]
+	ldp	w11, w12, [x19, #24]
+	stp	w9, w10, [x20, #16]
+	add	x9, sp, #8
+	stp	w11, w12, [x20, #24]
+.LBB12_4:
+	add		x10, x9, x8
 	add	x8, x8, #16
-	cmp		x8, x9
-	b.ne	.LBB13_2
-	add	x0, sp, #1, lsl #12
-	add	x0, x0, #320
+	strb		wzr, [x10]
+	strb	wzr, [x10, #8]
+	cmp		x8, #2048
+	b.ne	.LBB12_4
+	add	x0, sp, #2616
 	add	x1, sp, #8
-	orr	w2, wzr, #0x1000
-	add	x20, sp, #8
+	orr	w2, wzr, #0x800
+	add	x21, sp, #8
 	bl	memcpy
-	adrp	x9, op_jmp
-	add	x9, x9, :lo12:op_jmp
-	str	x9, [sp, #24]
-	adrp	x9, op_add
-	add	x9, x9, :lo12:op_add
-	str	x9, [sp, #32]
-	adrp	x9, op_mov
-	add	x9, x9, :lo12:op_mov
-	str	x9, [sp, #40]
-	adrp	x9, op_ceq
-	add	x9, x9, :lo12:op_ceq
-	str	x9, [sp, #48]
-	adrp	x9, op_jit
-	add	x9, x9, :lo12:op_jit
-	str	x9, [sp, #56]
-	adrp	x9, op_ldb
-	add	x9, x9, :lo12:op_ldb
-	str	x9, [sp, #64]
-	adrp	x9, op_ldi
-	add	x9, x9, :lo12:op_ldi
-	str	x9, [sp, #72]
-	adrp	x9, op_ldr
-	add	x9, x9, :lo12:op_ldr
-	str	x9, [sp, #80]
-	adrp	x9, op_lod
-	add	x9, x9, :lo12:op_lod
-	str	x9, [sp, #88]
-	adrp	x9, op_sto
-	add	x9, x9, :lo12:op_sto
-	str	x9, [sp, #96]
-	adrp	x9, op_cgt
-	add	x9, x9, :lo12:op_cgt
-	adrp	x8, op_hlt
-	str	x9, [sp, #104]
-	adrp	x9, op_addvn
-	add	x8, x8, :lo12:op_hlt
-	add	x9, x9, :lo12:op_addvn
 	add	x1, sp, #1, lsl #12
-	stp	x9, x8, [sp, #112]
-	mov	w9, #13
-	add	x0, x20, #288
-	add	x1, x1, #320
-	orr	w2, wzr, #0x1000
-	stp	xzr, x8, [sp, #8]
-	stp	x8, x8, [sp, #128]
-	stp	x8, x8, [sp, #144]
-	stp	x8, x8, [sp, #160]
-	stp	x8, x8, [sp, #176]
-	stp	x8, x8, [sp, #192]
-	stp	x8, x8, [sp, #208]
-	stp	x8, x8, [sp, #224]
-	stp	x8, x8, [sp, #240]
-	stp	x8, x8, [sp, #256]
-	stp	x19, x9, [sp, #272]
-	str	x9, [sp, #288]
+	add	x0, sp, #2480
+	add	x1, x1, #568
+	mov	w2, #136
 	bl	memcpy
-	orr	w8, wzr, #0x1
-	str	x8, [sp, #4392]
+	adrp	x8, op_jmp
+	add	x8, x8, :lo12:op_jmp
+	adrp	x9, op_add
+	stp	xzr, x8, [sp, #8]
+	adrp	x8, op_mov
+	add	x9, x9, :lo12:op_add
+	add	x8, x8, :lo12:op_mov
+	stp	x9, x8, [sp, #24]
+	adrp	x9, op_ceq
+	adrp	x8, op_jit
+	add	x9, x9, :lo12:op_ceq
+	add	x8, x8, :lo12:op_jit
+	stp	x9, x8, [sp, #40]
+	adrp	x9, op_ldb
+	adrp	x8, op_ldi
+	add	x9, x9, :lo12:op_ldb
+	add	x8, x8, :lo12:op_ldi
+	stp	x9, x8, [sp, #56]
+	adrp	x9, op_hlt
+	adrp	x8, op_cgt
+	add	x9, x9, :lo12:op_hlt
+	add	x8, x8, :lo12:op_cgt
+	stp	x9, x8, [sp, #88]
+	adrp	x8, op_rnd
+	add	x8, x8, :lo12:op_rnd
+	str	x8, [sp, #104]
+	adrp	x8, op_div
+	add	x8, x8, :lo12:op_div
+	str	x8, [sp, #112]
+	adrp	x8, op_mod
+	add	x8, x8, :lo12:op_mod
+	stp	x8, x9, [sp, #120]
+	orr	w8, wzr, #0x8
+	add	x0, x21, #288
+	add	x1, sp, #2616
+	orr	w2, wzr, #0x800
+	stp	x9, x9, [sp, #72]
+	stp	x9, x9, [sp, #136]
+	stp	x9, x9, [sp, #152]
+	stp	x9, x9, [sp, #168]
+	stp	x9, x9, [sp, #184]
+	stp	x9, x9, [sp, #200]
+	stp	x9, x9, [sp, #216]
+	stp	x9, x9, [sp, #232]
+	stp	x9, x9, [sp, #248]
+	stp	x9, x20, [sp, #264]
+	stp	x8, x8, [sp, #280]
+	bl	memcpy
+	add	x0, x21, #2336
+	add	x1, sp, #2480
+	mov	w2, #136
+	bl	memcpy
+	orr	w1, wzr, #0x20
+	orr	w2, wzr, #0x4
+	mov	 x0, x19
+	bl	__rust_deallocate
 	ldr	x8, [sp, #8]
-	str	xzr, [sp, #4408]
-	str	xzr, [sp, #4400]
 	add	x8, x8, #1
 	str	x8, [sp, #8]
 	ldr	x8, [sp, #288]
-	cbz	x8, .LBB13_13
+	cbz	x8, .LBB12_15
 	ldr	x8, [sp, #272]
 	ldr		w8, [x8]
 	and	w1, w8, #0xff
 	cmp		w1, #32
-	b.hs	.LBB13_15
+	b.hs	.LBB12_17
 	add	x9, sp, #8
 	add	x9, x9, x1, lsl #3
 	ldr	x9, [x9, #8]
-.Ltmp26:
+.Ltmp31:
 	add	x0, sp, #8
 	mov	 w1, w8
 	mov	 x2, xzr
 	blr	x9
-.Ltmp27:
+.Ltmp32:
 	ldr	x8, [sp, #280]
-	cbz	x8, .LBB13_8
+	cbz	x8, .LBB12_10
 	ldr	x0, [sp, #272]
 	lsl	x1, x8, #2
 	orr	w2, wzr, #0x4
 	bl	__rust_deallocate
-.LBB13_8:
-	ldr	x8, [sp, #4400]
-	cbz	x8, .LBB13_10
-	ldr	x0, [sp, #4392]
-	lsl	x1, x8, #4
-	orr	w2, wzr, #0x8
-	bl	__rust_deallocate
-.LBB13_10:
-	add	sp, sp, #2, lsl #12
-	add	sp, sp, #336
-	ldp	x19, x30, [sp, #16]
-	ldp	x28, x20, [sp], #32
+.LBB12_10:
+	add	sp, sp, #1, lsl #12
+	add	sp, sp, #704
+	ldp	x19, x30, [sp, #32]
+	ldp	x21, x20, [sp, #16]
+	ldr	x28, [sp], #48
 	ret
-.LBB13_11:
-.Ltmp31:
+.LBB12_11:
+.Ltmp39:
 	bl	_ZN5alloc3oom3oom17he12d244509df7328E
-.Ltmp32:
-.LBB13_13:
-.Ltmp28:
-	adrp	x0, panic_bounds_check_loc.2
-	add	x0, x0, :lo12:panic_bounds_check_loc.2
+.Ltmp40:
+.LBB12_13:
+.Ltmp36:
+	bl	_ZN5alloc3oom3oom17he12d244509df7328E
+.Ltmp37:
+.LBB12_15:
+.Ltmp33:
+	adrp	x0, panic_bounds_check_loc.7
+	add	x0, x0, :lo12:panic_bounds_check_loc.7
 	mov	 x1, xzr
 	mov	 x2, xzr
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
+.Ltmp34:
+.LBB12_17:
 .Ltmp29:
-.LBB13_15:
-.Ltmp24:
-	adrp	x0, panic_bounds_check_loc.v
-	add	x0, x0, :lo12:panic_bounds_check_loc.v
+	adrp	x0, panic_bounds_check_loc.F
+	add	x0, x0, :lo12:panic_bounds_check_loc.F
 	orr	w2, wzr, #0x20
 	bl	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E
-.Ltmp25:
-.LBB13_17:
-.Ltmp33:
-	bl	_Unwind_Resume
-.LBB13_18:
 .Ltmp30:
+.LBB12_19:
+.Ltmp41:
+	bl	_Unwind_Resume
+.LBB12_20:
+.Ltmp35:
 	ldr	x8, [sp, #280]
-	mov	 x19, x0
-	cbz	x8, .LBB13_20
+	mov	 x20, x0
+	cbz	x8, .LBB12_24
 	ldr	x0, [sp, #272]
 	lsl	x1, x8, #2
 	orr	w2, wzr, #0x4
-	bl	__rust_deallocate
-.LBB13_20:
-	ldr	x8, [sp, #4400]
-	cbz	x8, .LBB13_22
-	ldr	x0, [sp, #4392]
-	lsl	x1, x8, #4
-	orr	w2, wzr, #0x8
-	bl	__rust_deallocate
-.LBB13_22:
+	b	.LBB12_23
+.LBB12_22:
+.Ltmp38:
+	mov	 x20, x0
+	orr	w1, wzr, #0x20
+	orr	w2, wzr, #0x4
 	mov	 x0, x19
+.LBB12_23:
+	bl	__rust_deallocate
+.LBB12_24:
+	mov	 x0, x20
 	bl	_Unwind_Resume
-.Lfunc_end13:
-	.size	_ZN4main4main17h7409f745183f989cE, .Lfunc_end13-_ZN4main4main17h7409f745183f989cE
+.Lfunc_end12:
+	.size	_ZN4main4main17h7409f745183f989cE, .Lfunc_end12-_ZN4main4main17h7409f745183f989cE
 	.cfi_endproc
 	.section	.gcc_except_table,"a",@progbits
 	.p2align	2
-GCC_except_table13:
+GCC_except_table12:
 .Lexception0:
 	.byte	255
 	.byte	156
-	.asciz	"\303\200"
+	.byte	93
 	.byte	3
-	.byte	65
-	.word	.Lfunc_begin0-.Lfunc_begin0
-	.word	.Ltmp26-.Lfunc_begin0
-	.word	0
+	.byte	91
+	.word	.Ltmp27-.Lfunc_begin0
+	.word	.Ltmp28-.Ltmp27
+	.word	.Ltmp38-.Lfunc_begin0
 	.byte	0
-	.word	.Ltmp26-.Lfunc_begin0
-	.word	.Ltmp27-.Ltmp26
-	.word	.Ltmp30-.Lfunc_begin0
+	.word	.Ltmp28-.Lfunc_begin0
+	.word	.Ltmp31-.Ltmp28
+	.word	0
 	.byte	0
 	.word	.Ltmp31-.Lfunc_begin0
 	.word	.Ltmp32-.Ltmp31
+	.word	.Ltmp35-.Lfunc_begin0
+	.byte	0
+	.word	.Ltmp39-.Lfunc_begin0
+	.word	.Ltmp40-.Ltmp39
+	.word	.Ltmp41-.Lfunc_begin0
+	.byte	0
+	.word	.Ltmp36-.Lfunc_begin0
+	.word	.Ltmp37-.Ltmp36
+	.word	.Ltmp38-.Lfunc_begin0
+	.byte	0
 	.word	.Ltmp33-.Lfunc_begin0
+	.word	.Ltmp30-.Ltmp33
+	.word	.Ltmp35-.Lfunc_begin0
 	.byte	0
-	.word	.Ltmp28-.Lfunc_begin0
-	.word	.Ltmp25-.Ltmp28
 	.word	.Ltmp30-.Lfunc_begin0
-	.byte	0
-	.word	.Ltmp25-.Lfunc_begin0
-	.word	.Lfunc_end13-.Ltmp25
+	.word	.Lfunc_end12-.Ltmp30
 	.word	0
 	.byte	0
 	.p2align	2
@@ -991,53 +1019,155 @@ main:
 	mov	 x1, x10
 	mov	 x2, x8
 	b	_ZN3std2rt10lang_start17h5d71a3afaaa4b2ffE
-.Lfunc_end14:
-	.size	main, .Lfunc_end14-main
+.Lfunc_end13:
+	.size	main, .Lfunc_end13-main
 	.cfi_endproc
 
-	.type	str.1,@object
-	.section	.rodata.str.1,"a",@progbits
+	.type	str.3,@object
+	.section	.rodata.str.3,"a",@progbits
 	.p2align	4
-str.1:
-	.ascii	"../src/libcollections/vec.rs"
-	.size	str.1, 28
+str.3:
+	.ascii	"../src/librand/distributions/range.rs"
+	.size	str.3, 37
 
-	.type	panic_bounds_check_loc.2,@object
-	.section	.data.rel.ro.panic_bounds_check_loc.2,"aw",@progbits
+	.type	str.4,@object
+	.section	.rodata.str.4,"a",@progbits
+	.p2align	4
+str.4:
+	.ascii	"attempt to calculate the remainder with a divisor of zero"
+	.size	str.4, 57
+
+	.type	panic_loc.5,@object
+	.section	.data.rel.ro.panic_loc.5,"aw",@progbits
 	.p2align	3
-panic_bounds_check_loc.2:
-	.xword	str.1
+panic_loc.5:
+	.xword	str.4
+	.xword	57
+	.xword	str.3
+	.xword	37
+	.word	110
+	.zero	4
+	.size	panic_loc.5, 40
+
+	.type	str.6,@object
+	.section	.rodata.str.6,"a",@progbits
+	.p2align	4
+str.6:
+	.ascii	"../src/libcollections/vec.rs"
+	.size	str.6, 28
+
+	.type	panic_bounds_check_loc.7,@object
+	.section	.data.rel.ro.panic_bounds_check_loc.7,"aw",@progbits
+	.p2align	3
+panic_bounds_check_loc.7:
+	.xword	str.6
 	.xword	28
 	.word	1362
 	.zero	4
-	.size	panic_bounds_check_loc.2, 24
+	.size	panic_bounds_check_loc.7, 24
 
-	.type	panic_bounds_check_loc.3,@object
-	.section	.data.rel.ro.panic_bounds_check_loc.3,"aw",@progbits
-	.p2align	3
-panic_bounds_check_loc.3:
-	.xword	str.1
-	.xword	28
-	.word	1371
-	.zero	4
-	.size	panic_bounds_check_loc.3, 24
+	.type	str.8,@object
+	.section	.rodata.str.8,"a",@progbits
+	.p2align	4
+str.8:
+	.ascii	"attempt to divide by zero"
+	.size	str.8, 25
 
-	.type	str.u,@object
-	.section	.rodata.str.u,"a",@progbits
+	.type	ref.a,@object
+	.section	.rodata.cst16,"aM",@progbits,16
 	.p2align	2
-str.u:
-	.ascii	"src/threaded.rs"
-	.size	str.u, 15
+ref.a:
+	.word	1
+	.word	2
+	.word	3
+	.word	4
+	.size	ref.a, 16
 
-	.type	panic_bounds_check_loc.v,@object
-	.section	.data.rel.ro.panic_bounds_check_loc.v,"aw",@progbits
+	.type	str.b,@object
+	.section	.rodata.str.b,"a",@progbits
+	.p2align	2
+str.b:
+	.ascii	"src/vm.rs"
+	.size	str.b, 9
+
+	.type	panic_loc.s,@object
+	.section	.data.rel.ro.panic_loc.s,"aw",@progbits
 	.p2align	3
-panic_bounds_check_loc.v:
-	.xword	str.u
-	.xword	15
-	.word	69
+panic_loc.s:
+	.xword	str.8
+	.xword	25
+	.xword	str.b
+	.xword	9
+	.word	221
 	.zero	4
-	.size	panic_bounds_check_loc.v, 24
+	.size	panic_loc.s, 40
+
+	.type	str.t,@object
+	.section	.rodata.str.t,"a",@progbits
+	.p2align	4
+str.t:
+	.ascii	"attempt to divide with overflow"
+	.size	str.t, 31
+
+	.type	panic_loc.u,@object
+	.section	.data.rel.ro.panic_loc.u,"aw",@progbits
+	.p2align	3
+panic_loc.u:
+	.xword	str.t
+	.xword	31
+	.xword	str.b
+	.xword	9
+	.word	221
+	.zero	4
+	.size	panic_loc.u, 40
+
+	.type	panic_loc.z,@object
+	.section	.data.rel.ro.panic_loc.z,"aw",@progbits
+	.p2align	3
+panic_loc.z:
+	.xword	str.4
+	.xword	57
+	.xword	str.b
+	.xword	9
+	.word	236
+	.zero	4
+	.size	panic_loc.z, 40
+
+	.type	str.A,@object
+	.section	.rodata.str.A,"a",@progbits
+	.p2align	4
+str.A:
+	.ascii	"attempt to calculate the remainder with overflow"
+	.size	str.A, 48
+
+	.type	panic_loc.B,@object
+	.section	.data.rel.ro.panic_loc.B,"aw",@progbits
+	.p2align	3
+panic_loc.B:
+	.xword	str.A
+	.xword	48
+	.xword	str.b
+	.xword	9
+	.word	236
+	.zero	4
+	.size	panic_loc.B, 40
+
+	.type	str.E,@object
+	.section	.rodata.str.E,"a",@progbits
+	.p2align	2
+str.E:
+	.ascii	"src/threaded.rs"
+	.size	str.E, 15
+
+	.type	panic_bounds_check_loc.F,@object
+	.section	.data.rel.ro.panic_bounds_check_loc.F,"aw",@progbits
+	.p2align	3
+panic_bounds_check_loc.F:
+	.xword	str.E
+	.xword	15
+	.word	68
+	.zero	4
+	.size	panic_bounds_check_loc.F, 24
 
 	.hidden	DW.ref.rust_eh_personality
 	.weak	DW.ref.rust_eh_personality

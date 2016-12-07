@@ -39,6 +39,7 @@ macro_rules! label {
 
 /// Loads the address of a label and returns it. Parameter $name must be a string and an existing
 /// label name.
+#[cfg(target_arch = "x86_64")]
 macro_rules! label_addr {
     ($name:expr) => (
         {
@@ -55,15 +56,127 @@ macro_rules! label_addr {
 }
 
 
+#[cfg(target_arch = "x86")]
+macro_rules! label_addr {
+    ($name:expr) => (
+        {
+            let addr: usize;
+            unsafe { asm!(concat!("lea ", $name, ", $0")
+                          : "=&r"(addr)
+                          :
+                          :
+                          : "volatile" );
+            }
+            addr
+        }
+    )
+}
+
+
+#[cfg(target_arch = "aarch64")]
+macro_rules! label_addr {
+    ($name:expr) => (
+        {
+            let addr: usize;
+            unsafe { asm!(concat!("adrp $0, ", $name, "\n",
+                                  "add $0, $0, :lo12:", $name)
+                          : "=&r"(addr)
+                          :
+                          :
+                          : "volatile" );
+            }
+            addr
+        }
+    )
+}
+
+
+#[cfg(target_arch = "arm")]
+macro_rules! label_addr {
+    ($name:expr) => (
+        {
+            let addr: usize;
+            unsafe { asm!(concat!("adr $0, ", $name)
+                          : "=&r"(addr)
+                          :
+                          :
+                          : "volatile" );
+            }
+            addr
+        }
+    )
+}
+
+
 /// Reads the address of the next instruction from the jump table and jumps there.
+#[cfg(target_arch = "x86_64")]
 macro_rules! dispatch {
     ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
         $counter += 1;
         let addr = $jumptable[operator($opcode) as usize];
+
         unsafe {
+            // the inputs of this asm block force these locals to be in the specified
+            // registers after $action is exited, so that on entry to the consecutive
+            // $action, the previous asm block will be set up with the right register
+            // to locals mapping
             asm!("jmpq *$0"
                  :
                  : "r"(addr), "{r15d}"($counter), "{ecx}"($opcode), "{rdx}"($pc)
+                 :
+                 : "volatile"
+            );
+        }
+    }
+}
+
+
+#[cfg(target_arch = "x86")]
+macro_rules! dispatch {
+    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
+        $counter += 1;
+        let addr = $jumptable[operator($opcode) as usize];
+
+        unsafe {
+            asm!("jmpl *$0"
+                 :
+                 : "r"(addr), "{edi}"($counter), "{ecx}"($opcode), "{edx}"($pc)
+                 :
+                 : "volatile"
+            );
+        }
+    }
+}
+
+
+#[cfg(target_arch = "aarch64")]
+macro_rules! dispatch {
+    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
+        $counter += 1;
+        let addr = $jumptable[operator($opcode) as usize];
+
+        unsafe {
+            asm!("br $0"
+                 :
+                 : "r"(addr), "{x11}"($counter), "{w9}"($opcode), "{x10}"($pc)
+                 :
+                 : "volatile"
+            );
+        }
+    }
+}
+
+
+#[cfg(target_arch = "arm")]
+macro_rules! dispatch {
+    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
+        $counter += 1;
+        let addr = $jumptable[operator($opcode) as usize];
+
+        unsafe {
+            asm!("bx $0"
+                 :
+                 : "r"(addr), "{r11}"($counter), "{r8}"($opcode), "{r10}"($pc)
                  :
                  : "volatile"
             );
@@ -79,6 +192,7 @@ macro_rules! dispatch {
 ///  * $opcode must be a function-local u32
 ///  * $counter must be a function-local integer
 ///  * $action must be a block containing the VM instruction code
+#[cfg(target_arch = "x86_64")]
 macro_rules! do_and_dispatch {
     ($jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
 
@@ -96,21 +210,70 @@ macro_rules! do_and_dispatch {
             $action
         }
 
-        $counter += 1;
-        let addr = $jumptable[operator($opcode) as usize];
+        dispatch!($pc, $opcode, $jumptable, $counter);
+    }
+}
 
-        // the inputs of this asm block force these locals to be in the specified
-        // registers after $action is exited, so that on entry to the consecutive
-        // $action, the previous asm block will be set up with the right register
-        // to locals mapping
+
+#[cfg(target_arch = "x86")]
+macro_rules! do_and_dispatch {
+    ($jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
+
         unsafe {
-            asm!("jmpq *$0"
+            asm!(concat!($name, ":")
+                 : "={edi}"($counter), "={ecx}"($opcode), "={edx}"($pc)
                  :
-                 : "r"(addr), "{r15d}"($counter), "{ecx}"($opcode), "{rdx}"($pc)
                  :
-                 : "volatile"
-            );
+                 : "volatile");
         }
+
+        {
+            $action
+        }
+
+        dispatch!($pc, $opcode, $jumptable, $counter);
+    }
+}
+
+
+#[cfg(target_arch = "aarch64")]
+macro_rules! do_and_dispatch {
+    ($jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
+
+        unsafe {
+            asm!(concat!($name, ":")
+                 : "={x11}"($counter), "={w9}"($opcode), "={x10}"($pc)
+                 :
+                 :
+                 : "volatile");
+        }
+
+        {
+            $action
+        }
+
+        dispatch!($pc, $opcode, $jumptable, $counter);
+    }
+}
+
+
+#[cfg(target_arch = "arm")]
+macro_rules! do_and_dispatch {
+    ($jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
+
+        unsafe {
+            asm!(concat!($name, ":")
+                 : "={r11}"($counter), "={r8}"($opcode), "={r10}"($pc)
+                 :
+                 :
+                 : "volatile");
+        }
+
+        {
+            $action
+        }
+
+        dispatch!($pc, $opcode, $jumptable, $counter);
     }
 }
 

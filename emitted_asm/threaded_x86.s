@@ -72,7 +72,7 @@ op_jmp:
 	subl	$4, %esp
 .Ltmp13:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %edx
+	leal	panic_bounds_check_loc.7@GOTOFF(%ebx), %edx
 	pushl	%eax
 .Ltmp14:
 	.cfi_adjust_cfa_offset 4
@@ -91,7 +91,7 @@ op_jmp:
 .LBB1_4:
 .Ltmp19:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.F@GOTOFF(%ebx), %eax
 	pushl	$32
 .Ltmp20:
 	.cfi_adjust_cfa_offset 4
@@ -203,7 +203,7 @@ op_add:
 	subl	$4, %esp
 .Ltmp42:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %ecx
+	leal	panic_bounds_check_loc.7@GOTOFF(%ebx), %ecx
 	pushl	%eax
 .Ltmp43:
 	.cfi_adjust_cfa_offset 4
@@ -222,7 +222,7 @@ op_add:
 .LBB2_8:
 .Ltmp48:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.F@GOTOFF(%ebx), %eax
 	pushl	$32
 .Ltmp49:
 	.cfi_adjust_cfa_offset 4
@@ -310,7 +310,7 @@ op_mov:
 	subl	$4, %esp
 .Ltmp67:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.7@GOTOFF(%ebx), %eax
 	pushl	%ecx
 .Ltmp68:
 	.cfi_adjust_cfa_offset 4
@@ -329,7 +329,7 @@ op_mov:
 .LBB3_4:
 .Ltmp73:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.F@GOTOFF(%ebx), %eax
 	pushl	$32
 .Ltmp74:
 	.cfi_adjust_cfa_offset 4
@@ -396,52 +396,44 @@ op_ceq:
 	movzbl	%cl, %edi
 	movb	144(%ebp,%esi,8), %cl
 	cmpb	$1, %cl
-	je	.LBB4_5
+	je	.LBB4_4
 	cmpb	$2, %cl
-	je	.LBB4_7
-	cmpb	$3, %cl
-	jne	.LBB4_9
-	cmpb	$3, 144(%ebp,%edi,8)
-	je	.LBB4_6
-	xorl	%ecx, %ecx
-	jmp	.LBB4_11
-.LBB4_5:
-	cmpb	$1, 144(%ebp,%edi,8)
-	jne	.LBB4_15
-.LBB4_6:
-	movl	148(%ebp,%esi,8), %ecx
-	cmpl	148(%ebp,%edi,8), %ecx
-	jmp	.LBB4_10
-.LBB4_7:
+	jne	.LBB4_6
 	cmpb	$2, 144(%ebp,%edi,8)
-	jne	.LBB4_15
+	jne	.LBB4_12
 	movb	145(%ebp,%esi,8), %cl
 	cmpb	145(%ebp,%edi,8), %cl
-	jmp	.LBB4_10
-.LBB4_15:
-	xorl	%ecx, %ecx
-	jmp	.LBB4_11
-.LBB4_9:
+	jmp	.LBB4_7
+.LBB4_4:
+	cmpb	$1, 144(%ebp,%edi,8)
+	jne	.LBB4_12
+	movl	148(%ebp,%esi,8), %ecx
+	cmpl	148(%ebp,%edi,8), %ecx
+	jmp	.LBB4_7
+.LBB4_6:
 	cmpb	$0, 144(%ebp,%edi,8)
-.LBB4_10:
+.LBB4_7:
 	sete	%cl
-.LBB4_11:
+	jmp	.LBB4_8
+.LBB4_12:
+	xorl	%ecx, %ecx
+.LBB4_8:
 	movb	$2, 144(%ebp,%edx,8)
 	movb	%cl, 145(%ebp,%edx,8)
 	incl	(%ebp)
-	leal	1(%eax), %ecx
-	movl	140(%ebp), %edx
-	cmpl	%ecx, %edx
-	jbe	.LBB4_16
-	movl	132(%ebp), %edx
-	movl	4(%edx,%eax,4), %eax
-	movzbl	%al, %edx
+	leal	1(%eax), %edx
+	movl	140(%ebp), %ecx
+	cmpl	%edx, %ecx
+	jbe	.LBB4_13
+	movl	132(%ebp), %ecx
+	movl	4(%ecx,%eax,4), %eax
+	movzbl	%al, %ecx
 	subl	$4, %esp
-	cmpl	$32, %edx
-	jae	.LBB4_17
+	cmpl	$32, %ecx
+	jae	.LBB4_14
 .Ltmp91:
 	.cfi_adjust_cfa_offset 4
-	pushl	%ecx
+	pushl	%edx
 .Ltmp92:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
@@ -450,7 +442,7 @@ op_ceq:
 	pushl	%ebp
 .Ltmp94:
 	.cfi_adjust_cfa_offset 4
-	calll	*4(%ebp,%edx,4)
+	calll	*4(%ebp,%ecx,4)
 	addl	$28, %esp
 .Ltmp95:
 	.cfi_adjust_cfa_offset -16
@@ -459,15 +451,15 @@ op_ceq:
 	popl	%ebx
 	popl	%ebp
 	retl
-.LBB4_16:
+.LBB4_13:
 	subl	$4, %esp
 .Ltmp96:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %eax
-	pushl	%edx
+	leal	panic_bounds_check_loc.7@GOTOFF(%ebx), %eax
+	pushl	%ecx
 .Ltmp97:
 	.cfi_adjust_cfa_offset 4
-	pushl	%ecx
+	pushl	%edx
 .Ltmp98:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
@@ -479,14 +471,14 @@ op_ceq:
 	addl	$4, %esp
 .Ltmp101:
 	.cfi_adjust_cfa_offset -4
-.LBB4_17:
+.LBB4_14:
 .Ltmp102:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.F@GOTOFF(%ebx), %eax
 	pushl	$32
 .Ltmp103:
 	.cfi_adjust_cfa_offset 4
-	pushl	%edx
+	pushl	%ecx
 .Ltmp104:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
@@ -574,7 +566,7 @@ op_jit:
 	subl	$4, %esp
 .Ltmp121:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %edx
+	leal	panic_bounds_check_loc.7@GOTOFF(%ebx), %edx
 	pushl	%ecx
 .Ltmp122:
 	.cfi_adjust_cfa_offset 4
@@ -593,7 +585,7 @@ op_jit:
 .LBB5_8:
 .Ltmp127:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.F@GOTOFF(%ebx), %eax
 	pushl	$32
 .Ltmp128:
 	.cfi_adjust_cfa_offset 4
@@ -681,7 +673,7 @@ op_ldb:
 	subl	$4, %esp
 .Ltmp146:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.7@GOTOFF(%ebx), %eax
 	pushl	%ecx
 .Ltmp147:
 	.cfi_adjust_cfa_offset 4
@@ -700,7 +692,7 @@ op_ldb:
 .LBB6_4:
 .Ltmp152:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.F@GOTOFF(%ebx), %eax
 	pushl	$32
 .Ltmp153:
 	.cfi_adjust_cfa_offset 4
@@ -787,7 +779,7 @@ op_ldi:
 	subl	$4, %esp
 .Ltmp171:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.7@GOTOFF(%ebx), %eax
 	pushl	%ecx
 .Ltmp172:
 	.cfi_adjust_cfa_offset 4
@@ -806,7 +798,7 @@ op_ldi:
 .LBB7_4:
 .Ltmp177:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.F@GOTOFF(%ebx), %eax
 	pushl	$32
 .Ltmp178:
 	.cfi_adjust_cfa_offset 4
@@ -826,632 +818,672 @@ op_ldi:
 	.size	op_ldi, .Lfunc_end7-op_ldi
 	.cfi_endproc
 
-	.section	.text.op_ldr,"ax",@progbits
-	.p2align	4, 0x90
-	.type	op_ldr,@function
-op_ldr:
-	.cfi_startproc
-	pushl	%ebx
-.Ltmp183:
-	.cfi_def_cfa_offset 8
-	pushl	%esi
-.Ltmp184:
-	.cfi_def_cfa_offset 12
-	pushl	%eax
-.Ltmp185:
-	.cfi_def_cfa_offset 16
-.Ltmp186:
-	.cfi_offset %esi, -12
-.Ltmp187:
-	.cfi_offset %ebx, -8
-	movl	20(%esp), %edx
-	movl	16(%esp), %esi
-	calll	.L8$pb
-.Ltmp188:
-	.cfi_adjust_cfa_offset 4
-.L8$pb:
-	popl	%ebx
-.Ltmp189:
-	.cfi_adjust_cfa_offset -4
-	movl	24(%esp), %ecx
-.Ltmp190:
-	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp190-.L8$pb), %ebx
-	movzbl	%dh, %eax
-	shrl	$16, %edx
-	cmpb	$1, 144(%esi,%eax,8)
-	movzbl	%dl, %edx
-	jne	.LBB8_1
-	movl	148(%esi,%eax,8), %eax
-	movl	%eax, 148(%esi,%edx,8)
-	movb	$3, %al
-	jmp	.LBB8_3
-.LBB8_1:
-	xorl	%eax, %eax
-.LBB8_3:
-	movb	%al, 144(%esi,%edx,8)
-	incl	(%esi)
-	leal	1(%ecx), %edx
-	movl	140(%esi), %eax
-	cmpl	%edx, %eax
-	jbe	.LBB8_6
-	movl	132(%esi), %eax
-	movl	4(%eax,%ecx,4), %eax
-	movzbl	%al, %ecx
-	subl	$4, %esp
-	cmpl	$32, %ecx
-	jae	.LBB8_7
-.Ltmp191:
-	.cfi_adjust_cfa_offset 4
-	pushl	%edx
-.Ltmp192:
-	.cfi_adjust_cfa_offset 4
-	pushl	%eax
-.Ltmp193:
-	.cfi_adjust_cfa_offset 4
-	pushl	%esi
-.Ltmp194:
-	.cfi_adjust_cfa_offset 4
-	calll	*4(%esi,%ecx,4)
-	addl	$20, %esp
-.Ltmp195:
-	.cfi_adjust_cfa_offset -16
-	popl	%esi
-	popl	%ebx
-	retl
-.LBB8_6:
-	subl	$4, %esp
-.Ltmp196:
-	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %ecx
-	pushl	%eax
-.Ltmp197:
-	.cfi_adjust_cfa_offset 4
-	pushl	%edx
-.Ltmp198:
-	.cfi_adjust_cfa_offset 4
-	pushl	%ecx
-.Ltmp199:
-	.cfi_adjust_cfa_offset 4
-	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp200:
-	.cfi_adjust_cfa_offset -12
-	addl	$4, %esp
-.Ltmp201:
-	.cfi_adjust_cfa_offset -4
-.LBB8_7:
-.Ltmp202:
-	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
-	pushl	$32
-.Ltmp203:
-	.cfi_adjust_cfa_offset 4
-	pushl	%ecx
-.Ltmp204:
-	.cfi_adjust_cfa_offset 4
-	pushl	%eax
-.Ltmp205:
-	.cfi_adjust_cfa_offset 4
-	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp206:
-	.cfi_adjust_cfa_offset -12
-	addl	$4, %esp
-.Ltmp207:
-	.cfi_adjust_cfa_offset -4
-.Lfunc_end8:
-	.size	op_ldr, .Lfunc_end8-op_ldr
-	.cfi_endproc
-
-	.section	.text.op_lod,"ax",@progbits
-	.p2align	4, 0x90
-	.type	op_lod,@function
-op_lod:
-	.cfi_startproc
-	pushl	%ebx
-.Ltmp208:
-	.cfi_def_cfa_offset 8
-	pushl	%esi
-.Ltmp209:
-	.cfi_def_cfa_offset 12
-	pushl	%eax
-.Ltmp210:
-	.cfi_def_cfa_offset 16
-.Ltmp211:
-	.cfi_offset %esi, -12
-.Ltmp212:
-	.cfi_offset %ebx, -8
-	movl	20(%esp), %edx
-	movl	16(%esp), %esi
-	calll	.L9$pb
-.Ltmp213:
-	.cfi_adjust_cfa_offset 4
-.L9$pb:
-	popl	%ebx
-.Ltmp214:
-	.cfi_adjust_cfa_offset -4
-.Ltmp215:
-	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp215-.L9$pb), %ebx
-	movzbl	%dh, %eax
-	cmpb	$3, 144(%esi,%eax,8)
-	jne	.LBB9_3
-	movl	148(%esi,%eax,8), %ecx
-	movl	2200(%esi), %eax
-	cmpl	%ecx, %eax
-	jbe	.LBB9_6
-	shrl	$16, %edx
-	movzbl	%dl, %eax
-	movl	2192(%esi), %edx
-	movsd	(%edx,%ecx,8), %xmm0
-	movsd	%xmm0, 144(%esi,%eax,8)
-.LBB9_3:
-	movl	24(%esp), %eax
-	incl	(%esi)
-	movl	140(%esi), %edx
-	leal	1(%eax), %ecx
-	cmpl	%ecx, %edx
-	jbe	.LBB9_7
-	movl	132(%esi), %edx
-	movl	4(%edx,%eax,4), %eax
-	movzbl	%al, %edx
-	subl	$4, %esp
-	cmpl	$32, %edx
-	jae	.LBB9_8
-.Ltmp216:
-	.cfi_adjust_cfa_offset 4
-	pushl	%ecx
-.Ltmp217:
-	.cfi_adjust_cfa_offset 4
-	pushl	%eax
-.Ltmp218:
-	.cfi_adjust_cfa_offset 4
-	pushl	%esi
-.Ltmp219:
-	.cfi_adjust_cfa_offset 4
-	calll	*4(%esi,%edx,4)
-	addl	$20, %esp
-.Ltmp220:
-	.cfi_adjust_cfa_offset -16
-	popl	%esi
-	popl	%ebx
-	retl
-.LBB9_7:
-	subl	$4, %esp
-.Ltmp221:
-	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %eax
-	pushl	%edx
-.Ltmp222:
-	.cfi_adjust_cfa_offset 4
-	pushl	%ecx
-.Ltmp223:
-	.cfi_adjust_cfa_offset 4
-	pushl	%eax
-.Ltmp224:
-	.cfi_adjust_cfa_offset 4
-	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp225:
-	.cfi_adjust_cfa_offset -12
-	addl	$4, %esp
-.Ltmp226:
-	.cfi_adjust_cfa_offset -4
-.LBB9_8:
-.Ltmp227:
-	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
-	pushl	$32
-.Ltmp228:
-	.cfi_adjust_cfa_offset 4
-	pushl	%edx
-.Ltmp229:
-	.cfi_adjust_cfa_offset 4
-	pushl	%eax
-.Ltmp230:
-	.cfi_adjust_cfa_offset 4
-	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp231:
-	.cfi_adjust_cfa_offset -12
-	addl	$4, %esp
-.Ltmp232:
-	.cfi_adjust_cfa_offset -4
-.LBB9_6:
-	subl	$4, %esp
-.Ltmp233:
-	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %edx
-	pushl	%eax
-.Ltmp234:
-	.cfi_adjust_cfa_offset 4
-	pushl	%ecx
-.Ltmp235:
-	.cfi_adjust_cfa_offset 4
-	pushl	%edx
-.Ltmp236:
-	.cfi_adjust_cfa_offset 4
-	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp237:
-	.cfi_adjust_cfa_offset -12
-	addl	$4, %esp
-.Ltmp238:
-	.cfi_adjust_cfa_offset -4
-.Lfunc_end9:
-	.size	op_lod, .Lfunc_end9-op_lod
-	.cfi_endproc
-
-	.section	.text.op_sto,"ax",@progbits
-	.p2align	4, 0x90
-	.type	op_sto,@function
-op_sto:
-	.cfi_startproc
-	pushl	%ebx
-.Ltmp239:
-	.cfi_def_cfa_offset 8
-	pushl	%esi
-.Ltmp240:
-	.cfi_def_cfa_offset 12
-	pushl	%eax
-.Ltmp241:
-	.cfi_def_cfa_offset 16
-.Ltmp242:
-	.cfi_offset %esi, -12
-.Ltmp243:
-	.cfi_offset %ebx, -8
-	movl	20(%esp), %ecx
-	movl	16(%esp), %eax
-	calll	.L10$pb
-.Ltmp244:
-	.cfi_adjust_cfa_offset 4
-.L10$pb:
-	popl	%ebx
-.Ltmp245:
-	.cfi_adjust_cfa_offset -4
-.Ltmp246:
-	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp246-.L10$pb), %ebx
-	movl	%ecx, %edx
-	shrl	$16, %edx
-	movzbl	%dl, %edx
-	cmpb	$3, 144(%eax,%edx,8)
-	jne	.LBB10_3
-	movl	148(%eax,%edx,8), %edx
-	movl	2200(%eax), %esi
-	cmpl	%edx, %esi
-	jbe	.LBB10_6
-	movzbl	%ch, %ecx
-	movl	2192(%eax), %esi
-	movsd	144(%eax,%ecx,8), %xmm0
-	movsd	%xmm0, (%esi,%edx,8)
-.LBB10_3:
-	movl	24(%esp), %ecx
-	incl	(%eax)
-	movl	140(%eax), %edx
-	leal	1(%ecx), %esi
-	cmpl	%esi, %edx
-	jbe	.LBB10_7
-	movl	132(%eax), %edx
-	movl	4(%edx,%ecx,4), %ecx
-	movzbl	%cl, %edx
-	subl	$4, %esp
-	cmpl	$32, %edx
-	jae	.LBB10_8
-.Ltmp247:
-	.cfi_adjust_cfa_offset 4
-	pushl	%esi
-.Ltmp248:
-	.cfi_adjust_cfa_offset 4
-	pushl	%ecx
-.Ltmp249:
-	.cfi_adjust_cfa_offset 4
-	pushl	%eax
-.Ltmp250:
-	.cfi_adjust_cfa_offset 4
-	calll	*4(%eax,%edx,4)
-	addl	$20, %esp
-.Ltmp251:
-	.cfi_adjust_cfa_offset -16
-	popl	%esi
-	popl	%ebx
-	retl
-.LBB10_7:
-	subl	$4, %esp
-.Ltmp252:
-	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %eax
-	pushl	%edx
-.Ltmp253:
-	.cfi_adjust_cfa_offset 4
-	pushl	%esi
-.Ltmp254:
-	.cfi_adjust_cfa_offset 4
-	pushl	%eax
-.Ltmp255:
-	.cfi_adjust_cfa_offset 4
-	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp256:
-	.cfi_adjust_cfa_offset -12
-	addl	$4, %esp
-.Ltmp257:
-	.cfi_adjust_cfa_offset -4
-.LBB10_8:
-.Ltmp258:
-	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
-	pushl	$32
-.Ltmp259:
-	.cfi_adjust_cfa_offset 4
-	pushl	%edx
-.Ltmp260:
-	.cfi_adjust_cfa_offset 4
-	pushl	%eax
-.Ltmp261:
-	.cfi_adjust_cfa_offset 4
-	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp262:
-	.cfi_adjust_cfa_offset -12
-	addl	$4, %esp
-.Ltmp263:
-	.cfi_adjust_cfa_offset -4
-.LBB10_6:
-	subl	$4, %esp
-.Ltmp264:
-	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.3@GOTOFF(%ebx), %eax
-	pushl	%esi
-.Ltmp265:
-	.cfi_adjust_cfa_offset 4
-	pushl	%edx
-.Ltmp266:
-	.cfi_adjust_cfa_offset 4
-	pushl	%eax
-.Ltmp267:
-	.cfi_adjust_cfa_offset 4
-	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp268:
-	.cfi_adjust_cfa_offset -12
-	addl	$4, %esp
-.Ltmp269:
-	.cfi_adjust_cfa_offset -4
-.Lfunc_end10:
-	.size	op_sto, .Lfunc_end10-op_sto
-	.cfi_endproc
-
 	.section	.text.op_cgt,"ax",@progbits
 	.p2align	4, 0x90
 	.type	op_cgt,@function
 op_cgt:
 	.cfi_startproc
 	pushl	%ebp
-.Ltmp270:
+.Ltmp183:
 	.cfi_def_cfa_offset 8
 	pushl	%ebx
-.Ltmp271:
+.Ltmp184:
 	.cfi_def_cfa_offset 12
 	pushl	%edi
-.Ltmp272:
+.Ltmp185:
 	.cfi_def_cfa_offset 16
 	pushl	%esi
-.Ltmp273:
+.Ltmp186:
 	.cfi_def_cfa_offset 20
 	subl	$12, %esp
-.Ltmp274:
+.Ltmp187:
 	.cfi_def_cfa_offset 32
-.Ltmp275:
+.Ltmp188:
 	.cfi_offset %esi, -20
-.Ltmp276:
+.Ltmp189:
 	.cfi_offset %edi, -16
-.Ltmp277:
+.Ltmp190:
 	.cfi_offset %ebx, -12
-.Ltmp278:
+.Ltmp191:
 	.cfi_offset %ebp, -8
 	movl	36(%esp), %edx
 	movl	32(%esp), %ebp
-	calll	.L11$pb
-.Ltmp279:
+	calll	.L8$pb
+.Ltmp192:
 	.cfi_adjust_cfa_offset 4
-.L11$pb:
+.L8$pb:
 	popl	%ebx
-.Ltmp280:
+.Ltmp193:
 	.cfi_adjust_cfa_offset -4
 	movl	40(%esp), %ecx
-.Ltmp281:
-	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp281-.L11$pb), %ebx
+.Ltmp194:
+	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp194-.L8$pb), %ebx
 	movl	%edx, %edi
 	movzbl	%dh, %esi
 	shrl	$24, %edi
 	cmpb	$1, 144(%ebp,%esi,8)
-	jne	.LBB11_3
+	jne	.LBB8_3
 	shrl	$16, %edx
 	movzbl	%dl, %eax
 	cmpb	$1, 144(%ebp,%eax,8)
-	jne	.LBB11_3
+	jne	.LBB8_3
 	movl	148(%ebp,%esi,8), %edx
 	cmpl	148(%ebp,%eax,8), %edx
 	movb	$2, 144(%ebp,%edi,8)
 	setg	145(%ebp,%edi,8)
-	jmp	.LBB11_4
-.LBB11_3:
+	jmp	.LBB8_4
+.LBB8_3:
 	movb	$0, 144(%ebp,%edi,8)
-.LBB11_4:
+.LBB8_4:
 	incl	(%ebp)
 	leal	1(%ecx), %edx
 	movl	140(%ebp), %eax
 	cmpl	%edx, %eax
-	jbe	.LBB11_7
+	jbe	.LBB8_7
 	movl	132(%ebp), %eax
 	movl	4(%eax,%ecx,4), %eax
 	movzbl	%al, %ecx
 	subl	$4, %esp
 	cmpl	$32, %ecx
-	jae	.LBB11_8
-.Ltmp282:
+	jae	.LBB8_8
+.Ltmp195:
 	.cfi_adjust_cfa_offset 4
 	pushl	%edx
-.Ltmp283:
+.Ltmp196:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
-.Ltmp284:
+.Ltmp197:
 	.cfi_adjust_cfa_offset 4
 	pushl	%ebp
-.Ltmp285:
+.Ltmp198:
 	.cfi_adjust_cfa_offset 4
 	calll	*4(%ebp,%ecx,4)
 	addl	$28, %esp
-.Ltmp286:
+.Ltmp199:
 	.cfi_adjust_cfa_offset -16
 	popl	%esi
 	popl	%edi
 	popl	%ebx
 	popl	%ebp
 	retl
-.LBB11_7:
+.LBB8_7:
 	subl	$4, %esp
-.Ltmp287:
+.Ltmp200:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %ecx
+	leal	panic_bounds_check_loc.7@GOTOFF(%ebx), %ecx
 	pushl	%eax
-.Ltmp288:
+.Ltmp201:
 	.cfi_adjust_cfa_offset 4
 	pushl	%edx
-.Ltmp289:
+.Ltmp202:
 	.cfi_adjust_cfa_offset 4
 	pushl	%ecx
-.Ltmp290:
+.Ltmp203:
 	.cfi_adjust_cfa_offset 4
 	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp291:
+.Ltmp204:
 	.cfi_adjust_cfa_offset -12
 	addl	$4, %esp
-.Ltmp292:
+.Ltmp205:
 	.cfi_adjust_cfa_offset -4
-.LBB11_8:
-.Ltmp293:
+.LBB8_8:
+.Ltmp206:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.F@GOTOFF(%ebx), %eax
 	pushl	$32
-.Ltmp294:
+.Ltmp207:
 	.cfi_adjust_cfa_offset 4
 	pushl	%ecx
-.Ltmp295:
+.Ltmp208:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
-.Ltmp296:
+.Ltmp209:
 	.cfi_adjust_cfa_offset 4
 	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp297:
+.Ltmp210:
 	.cfi_adjust_cfa_offset -12
 	addl	$4, %esp
-.Ltmp298:
+.Ltmp211:
 	.cfi_adjust_cfa_offset -4
-.Lfunc_end11:
-	.size	op_cgt, .Lfunc_end11-op_cgt
+.Lfunc_end8:
+	.size	op_cgt, .Lfunc_end8-op_cgt
 	.cfi_endproc
 
-	.section	.text.op_addvn,"ax",@progbits
+	.section	.text.op_rnd,"ax",@progbits
 	.p2align	4, 0x90
-	.type	op_addvn,@function
-op_addvn:
+	.type	op_rnd,@function
+op_rnd:
 	.cfi_startproc
-	pushl	%ebx
-.Ltmp299:
+	pushl	%ebp
+.Ltmp212:
 	.cfi_def_cfa_offset 8
-	pushl	%esi
-.Ltmp300:
+	pushl	%ebx
+.Ltmp213:
 	.cfi_def_cfa_offset 12
-	pushl	%eax
-.Ltmp301:
+	pushl	%edi
+.Ltmp214:
 	.cfi_def_cfa_offset 16
-.Ltmp302:
-	.cfi_offset %esi, -12
-.Ltmp303:
-	.cfi_offset %ebx, -8
-	movl	20(%esp), %edx
-	movl	16(%esp), %eax
-	calll	.L12$pb
-.Ltmp304:
+	pushl	%esi
+.Ltmp215:
+	.cfi_def_cfa_offset 20
+	subl	$28, %esp
+.Ltmp216:
+	.cfi_def_cfa_offset 48
+.Ltmp217:
+	.cfi_offset %esi, -20
+.Ltmp218:
+	.cfi_offset %edi, -16
+.Ltmp219:
+	.cfi_offset %ebx, -12
+.Ltmp220:
+	.cfi_offset %ebp, -8
+	movl	52(%esp), %ecx
+	calll	.L9$pb
+.Ltmp221:
 	.cfi_adjust_cfa_offset 4
-.L12$pb:
+.L9$pb:
 	popl	%ebx
-.Ltmp305:
+.Ltmp222:
 	.cfi_adjust_cfa_offset -4
-	movl	24(%esp), %ecx
-.Ltmp306:
-	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp306-.L12$pb), %ebx
-	movzbl	%dh, %esi
-	cmpb	$1, 144(%eax,%esi,8)
-	jne	.LBB12_2
-	sarl	$16, %edx
-	addl	%edx, 148(%eax,%esi,8)
-	jmp	.LBB12_3
-.LBB12_2:
-	movb	$0, 144(%eax,%esi,8)
-.LBB12_3:
-	incl	(%eax)
-	leal	1(%ecx), %esi
-	movl	140(%eax), %edx
-	cmpl	%esi, %edx
-	jbe	.LBB12_6
-	movl	132(%eax), %edx
-	movl	4(%edx,%ecx,4), %edx
+.Ltmp223:
+	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp223-.L9$pb), %ebx
+	movl	%ecx, %eax
+	sarl	$16, %eax
+	testl	%eax, %eax
+	jle	.LBB9_9
+	movl	48(%esp), %esi
+	movzbl	%ch, %ecx
+	movl	%ecx, 12(%esp)
+	leal	2192(%esi), %edi
+	subl	$4, %esp
+.Ltmp224:
+	.cfi_adjust_cfa_offset 4
+	leal	20(%esp), %ecx
+	pushl	%eax
+.Ltmp225:
+	.cfi_adjust_cfa_offset 4
+	pushl	$0
+.Ltmp226:
+	.cfi_adjust_cfa_offset 4
+	pushl	%ecx
+.Ltmp227:
+	.cfi_adjust_cfa_offset 4
+	calll	_ZN63_$LT$i32$u20$as$u20$rand..distributions..range..SampleRange$GT$15construct_range17h075819428406b5c5E@PLT
+.Ltmp228:
+	.cfi_adjust_cfa_offset -4
+	addl	$12, %esp
+.Ltmp229:
+	.cfi_adjust_cfa_offset -12
+	movl	24(%esp), %ebp
+	movl	2320(%esi), %ecx
+	.p2align	4, 0x90
+.LBB9_2:
+	cmpl	$16, %ecx
+	jne	.LBB9_4
+	subl	$12, %esp
+.Ltmp230:
+	.cfi_adjust_cfa_offset 12
+	pushl	%edi
+.Ltmp231:
+	.cfi_adjust_cfa_offset 4
+	calll	_ZN4rand6chacha9ChaChaRng6update17hc72718d7582c325dE@PLT
+	addl	$16, %esp
+.Ltmp232:
+	.cfi_adjust_cfa_offset -16
+	movl	2320(%esi), %ecx
+.LBB9_4:
+	movl	%ecx, %eax
+	incl	%ecx
+	andl	$15, %eax
+	movl	2192(%esi,%eax,4), %eax
+	movl	%ecx, 2320(%esi)
+	cmpl	%ebp, %eax
+	jae	.LBB9_2
+	movl	20(%esp), %ecx
+	testl	%ecx, %ecx
+	je	.LBB9_10
+	movl	16(%esp), %edi
+	xorl	%edx, %edx
+	divl	%ecx
+	movl	12(%esp), %eax
+	addl	%edi, %edx
+	movb	$1, 144(%esi,%eax,8)
+	movl	%edx, 148(%esi,%eax,8)
+	movl	56(%esp), %edx
+	incl	(%esi)
+	movl	140(%esi), %ecx
+	leal	1(%edx), %eax
+	cmpl	%eax, %ecx
+	jbe	.LBB9_11
+	movl	132(%esi), %ecx
+	movl	4(%ecx,%edx,4), %edx
 	movzbl	%dl, %ecx
 	subl	$4, %esp
 	cmpl	$32, %ecx
-	jae	.LBB12_7
-.Ltmp307:
-	.cfi_adjust_cfa_offset 4
-	pushl	%esi
-.Ltmp308:
-	.cfi_adjust_cfa_offset 4
-	pushl	%edx
-.Ltmp309:
+	jae	.LBB9_12
+.Ltmp233:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
-.Ltmp310:
+.Ltmp234:
 	.cfi_adjust_cfa_offset 4
-	calll	*4(%eax,%ecx,4)
-	addl	$20, %esp
-.Ltmp311:
+	pushl	%edx
+.Ltmp235:
+	.cfi_adjust_cfa_offset 4
+	pushl	%esi
+.Ltmp236:
+	.cfi_adjust_cfa_offset 4
+	calll	*4(%esi,%ecx,4)
+	addl	$44, %esp
+.Ltmp237:
 	.cfi_adjust_cfa_offset -16
 	popl	%esi
+	popl	%edi
 	popl	%ebx
+	popl	%ebp
 	retl
-.LBB12_6:
+.LBB9_9:
+	subl	$16, %esp
+.Ltmp238:
+	.cfi_adjust_cfa_offset 16
+	movl	_ZN4rand3Rng9gen_range14_MSG_FILE_LINE17hc4b99005c913875eE@GOT(%ebx), %eax
+	movl	%eax, (%esp)
+	calll	_ZN4core9panicking5panic17h194ce5d68a8f28a1E@PLT
+.Ltmp239:
+	.cfi_adjust_cfa_offset -4
+	addl	$12, %esp
+.Ltmp240:
+	.cfi_adjust_cfa_offset -12
+.LBB9_10:
+	subl	$12, %esp
+.Ltmp241:
+	.cfi_adjust_cfa_offset 12
+	leal	panic_loc.5@GOTOFF(%ebx), %eax
+	pushl	%eax
+.Ltmp242:
+	.cfi_adjust_cfa_offset 4
+	calll	_ZN4core9panicking5panic17h194ce5d68a8f28a1E@PLT
+.Ltmp243:
+	.cfi_adjust_cfa_offset -4
+	addl	$12, %esp
+.Ltmp244:
+	.cfi_adjust_cfa_offset -12
+.LBB9_11:
 	subl	$4, %esp
-.Ltmp312:
+.Ltmp245:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %eax
-	pushl	%edx
-.Ltmp313:
-	.cfi_adjust_cfa_offset 4
-	pushl	%esi
-.Ltmp314:
+	leal	panic_bounds_check_loc.7@GOTOFF(%ebx), %edx
+	pushl	%ecx
+.Ltmp246:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
-.Ltmp315:
+.Ltmp247:
+	.cfi_adjust_cfa_offset 4
+	pushl	%edx
+.Ltmp248:
 	.cfi_adjust_cfa_offset 4
 	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp316:
+.Ltmp249:
 	.cfi_adjust_cfa_offset -12
 	addl	$4, %esp
-.Ltmp317:
+.Ltmp250:
 	.cfi_adjust_cfa_offset -4
-.LBB12_7:
-.Ltmp318:
+.LBB9_12:
+.Ltmp251:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.F@GOTOFF(%ebx), %eax
 	pushl	$32
-.Ltmp319:
+.Ltmp252:
 	.cfi_adjust_cfa_offset 4
 	pushl	%ecx
-.Ltmp320:
+.Ltmp253:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
-.Ltmp321:
+.Ltmp254:
 	.cfi_adjust_cfa_offset 4
 	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp322:
+.Ltmp255:
 	.cfi_adjust_cfa_offset -12
 	addl	$4, %esp
-.Ltmp323:
+.Ltmp256:
 	.cfi_adjust_cfa_offset -4
-.Lfunc_end12:
-	.size	op_addvn, .Lfunc_end12-op_addvn
+.Lfunc_end9:
+	.size	op_rnd, .Lfunc_end9-op_rnd
+	.cfi_endproc
+
+	.section	.text.op_div,"ax",@progbits
+	.p2align	4, 0x90
+	.type	op_div,@function
+op_div:
+	.cfi_startproc
+	pushl	%ebp
+.Ltmp257:
+	.cfi_def_cfa_offset 8
+	pushl	%ebx
+.Ltmp258:
+	.cfi_def_cfa_offset 12
+	pushl	%edi
+.Ltmp259:
+	.cfi_def_cfa_offset 16
+	pushl	%esi
+.Ltmp260:
+	.cfi_def_cfa_offset 20
+	subl	$12, %esp
+.Ltmp261:
+	.cfi_def_cfa_offset 32
+.Ltmp262:
+	.cfi_offset %esi, -20
+.Ltmp263:
+	.cfi_offset %edi, -16
+.Ltmp264:
+	.cfi_offset %ebx, -12
+.Ltmp265:
+	.cfi_offset %ebp, -8
+	movl	36(%esp), %edx
+	movl	32(%esp), %ebp
+	calll	.L10$pb
+.Ltmp266:
+	.cfi_adjust_cfa_offset 4
+.L10$pb:
+	popl	%ebx
+.Ltmp267:
+	.cfi_adjust_cfa_offset -4
+.Ltmp268:
+	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp268-.L10$pb), %ebx
+	movl	%edx, %esi
+	movzbl	%dh, %eax
+	shrl	$24, %esi
+	cmpb	$1, 144(%ebp,%eax,8)
+	jne	.LBB10_8
+	shrl	$16, %edx
+	movzbl	%dl, %ecx
+	cmpb	$1, 144(%ebp,%ecx,8)
+	jne	.LBB10_8
+	movl	148(%ebp,%ecx,8), %edi
+	testl	%edi, %edi
+	je	.LBB10_6
+	movl	148(%ebp,%eax,8), %eax
+	cmpl	$-2147483648, %eax
+	jne	.LBB10_5
+	cmpl	$-1, %edi
+	je	.LBB10_7
+.LBB10_5:
+	cltd
+	idivl	%edi
+	movb	$1, 144(%ebp,%esi,8)
+	movl	%eax, 148(%ebp,%esi,8)
+	jmp	.LBB10_9
+.LBB10_8:
+	movb	$0, 144(%ebp,%esi,8)
+.LBB10_9:
+	movl	40(%esp), %ecx
+	incl	(%ebp)
+	movl	140(%ebp), %edx
+	leal	1(%ecx), %eax
+	cmpl	%eax, %edx
+	jbe	.LBB10_12
+	movl	132(%ebp), %edx
+	movl	4(%edx,%ecx,4), %ecx
+	movzbl	%cl, %edx
+	subl	$4, %esp
+	cmpl	$32, %edx
+	jae	.LBB10_13
+.Ltmp269:
+	.cfi_adjust_cfa_offset 4
+	pushl	%eax
+.Ltmp270:
+	.cfi_adjust_cfa_offset 4
+	pushl	%ecx
+.Ltmp271:
+	.cfi_adjust_cfa_offset 4
+	pushl	%ebp
+.Ltmp272:
+	.cfi_adjust_cfa_offset 4
+	calll	*4(%ebp,%edx,4)
+	addl	$28, %esp
+.Ltmp273:
+	.cfi_adjust_cfa_offset -16
+	popl	%esi
+	popl	%edi
+	popl	%ebx
+	popl	%ebp
+	retl
+.LBB10_12:
+	subl	$4, %esp
+.Ltmp274:
+	.cfi_adjust_cfa_offset 4
+	leal	panic_bounds_check_loc.7@GOTOFF(%ebx), %ecx
+	pushl	%edx
+.Ltmp275:
+	.cfi_adjust_cfa_offset 4
+	pushl	%eax
+.Ltmp276:
+	.cfi_adjust_cfa_offset 4
+	pushl	%ecx
+.Ltmp277:
+	.cfi_adjust_cfa_offset 4
+	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
+.Ltmp278:
+	.cfi_adjust_cfa_offset -12
+	addl	$4, %esp
+.Ltmp279:
+	.cfi_adjust_cfa_offset -4
+.LBB10_13:
+.Ltmp280:
+	.cfi_adjust_cfa_offset 4
+	leal	panic_bounds_check_loc.F@GOTOFF(%ebx), %eax
+	pushl	$32
+.Ltmp281:
+	.cfi_adjust_cfa_offset 4
+	pushl	%edx
+.Ltmp282:
+	.cfi_adjust_cfa_offset 4
+	pushl	%eax
+.Ltmp283:
+	.cfi_adjust_cfa_offset 4
+	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
+.Ltmp284:
+	.cfi_adjust_cfa_offset -12
+	addl	$4, %esp
+.Ltmp285:
+	.cfi_adjust_cfa_offset -4
+.LBB10_6:
+	subl	$12, %esp
+.Ltmp286:
+	.cfi_adjust_cfa_offset 12
+	leal	panic_loc.s@GOTOFF(%ebx), %eax
+	pushl	%eax
+.Ltmp287:
+	.cfi_adjust_cfa_offset 4
+	calll	_ZN4core9panicking5panic17h194ce5d68a8f28a1E@PLT
+.Ltmp288:
+	.cfi_adjust_cfa_offset -4
+	addl	$12, %esp
+.Ltmp289:
+	.cfi_adjust_cfa_offset -12
+.LBB10_7:
+	subl	$12, %esp
+.Ltmp290:
+	.cfi_adjust_cfa_offset 12
+	leal	panic_loc.u@GOTOFF(%ebx), %eax
+	pushl	%eax
+.Ltmp291:
+	.cfi_adjust_cfa_offset 4
+	calll	_ZN4core9panicking5panic17h194ce5d68a8f28a1E@PLT
+.Ltmp292:
+	.cfi_adjust_cfa_offset -4
+	addl	$12, %esp
+.Ltmp293:
+	.cfi_adjust_cfa_offset -12
+.Lfunc_end10:
+	.size	op_div, .Lfunc_end10-op_div
+	.cfi_endproc
+
+	.section	.text.op_mod,"ax",@progbits
+	.p2align	4, 0x90
+	.type	op_mod,@function
+op_mod:
+	.cfi_startproc
+	pushl	%ebp
+.Ltmp294:
+	.cfi_def_cfa_offset 8
+	pushl	%ebx
+.Ltmp295:
+	.cfi_def_cfa_offset 12
+	pushl	%edi
+.Ltmp296:
+	.cfi_def_cfa_offset 16
+	pushl	%esi
+.Ltmp297:
+	.cfi_def_cfa_offset 20
+	subl	$12, %esp
+.Ltmp298:
+	.cfi_def_cfa_offset 32
+.Ltmp299:
+	.cfi_offset %esi, -20
+.Ltmp300:
+	.cfi_offset %edi, -16
+.Ltmp301:
+	.cfi_offset %ebx, -12
+.Ltmp302:
+	.cfi_offset %ebp, -8
+	movl	36(%esp), %edx
+	movl	32(%esp), %ebp
+	calll	.L11$pb
+.Ltmp303:
+	.cfi_adjust_cfa_offset 4
+.L11$pb:
+	popl	%ebx
+.Ltmp304:
+	.cfi_adjust_cfa_offset -4
+.Ltmp305:
+	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp305-.L11$pb), %ebx
+	movl	%edx, %esi
+	movzbl	%dh, %eax
+	shrl	$24, %esi
+	cmpb	$1, 144(%ebp,%eax,8)
+	jne	.LBB11_8
+	shrl	$16, %edx
+	movzbl	%dl, %ecx
+	cmpb	$1, 144(%ebp,%ecx,8)
+	jne	.LBB11_8
+	movl	148(%ebp,%ecx,8), %edi
+	testl	%edi, %edi
+	je	.LBB11_6
+	movl	148(%ebp,%eax,8), %eax
+	cmpl	$-2147483648, %eax
+	jne	.LBB11_5
+	cmpl	$-1, %edi
+	je	.LBB11_7
+.LBB11_5:
+	cltd
+	idivl	%edi
+	movb	$1, 144(%ebp,%esi,8)
+	movl	%edx, 148(%ebp,%esi,8)
+	jmp	.LBB11_9
+.LBB11_8:
+	movb	$0, 144(%ebp,%esi,8)
+.LBB11_9:
+	movl	40(%esp), %ecx
+	incl	(%ebp)
+	movl	140(%ebp), %edx
+	leal	1(%ecx), %eax
+	cmpl	%eax, %edx
+	jbe	.LBB11_12
+	movl	132(%ebp), %edx
+	movl	4(%edx,%ecx,4), %ecx
+	movzbl	%cl, %edx
+	subl	$4, %esp
+	cmpl	$32, %edx
+	jae	.LBB11_13
+.Ltmp306:
+	.cfi_adjust_cfa_offset 4
+	pushl	%eax
+.Ltmp307:
+	.cfi_adjust_cfa_offset 4
+	pushl	%ecx
+.Ltmp308:
+	.cfi_adjust_cfa_offset 4
+	pushl	%ebp
+.Ltmp309:
+	.cfi_adjust_cfa_offset 4
+	calll	*4(%ebp,%edx,4)
+	addl	$28, %esp
+.Ltmp310:
+	.cfi_adjust_cfa_offset -16
+	popl	%esi
+	popl	%edi
+	popl	%ebx
+	popl	%ebp
+	retl
+.LBB11_12:
+	subl	$4, %esp
+.Ltmp311:
+	.cfi_adjust_cfa_offset 4
+	leal	panic_bounds_check_loc.7@GOTOFF(%ebx), %ecx
+	pushl	%edx
+.Ltmp312:
+	.cfi_adjust_cfa_offset 4
+	pushl	%eax
+.Ltmp313:
+	.cfi_adjust_cfa_offset 4
+	pushl	%ecx
+.Ltmp314:
+	.cfi_adjust_cfa_offset 4
+	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
+.Ltmp315:
+	.cfi_adjust_cfa_offset -12
+	addl	$4, %esp
+.Ltmp316:
+	.cfi_adjust_cfa_offset -4
+.LBB11_13:
+.Ltmp317:
+	.cfi_adjust_cfa_offset 4
+	leal	panic_bounds_check_loc.F@GOTOFF(%ebx), %eax
+	pushl	$32
+.Ltmp318:
+	.cfi_adjust_cfa_offset 4
+	pushl	%edx
+.Ltmp319:
+	.cfi_adjust_cfa_offset 4
+	pushl	%eax
+.Ltmp320:
+	.cfi_adjust_cfa_offset 4
+	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
+.Ltmp321:
+	.cfi_adjust_cfa_offset -12
+	addl	$4, %esp
+.Ltmp322:
+	.cfi_adjust_cfa_offset -4
+.LBB11_6:
+	subl	$12, %esp
+.Ltmp323:
+	.cfi_adjust_cfa_offset 12
+	leal	panic_loc.z@GOTOFF(%ebx), %eax
+	pushl	%eax
+.Ltmp324:
+	.cfi_adjust_cfa_offset 4
+	calll	_ZN4core9panicking5panic17h194ce5d68a8f28a1E@PLT
+.Ltmp325:
+	.cfi_adjust_cfa_offset -4
+	addl	$12, %esp
+.Ltmp326:
+	.cfi_adjust_cfa_offset -12
+.LBB11_7:
+	subl	$12, %esp
+.Ltmp327:
+	.cfi_adjust_cfa_offset 12
+	leal	panic_loc.B@GOTOFF(%ebx), %eax
+	pushl	%eax
+.Ltmp328:
+	.cfi_adjust_cfa_offset 4
+	calll	_ZN4core9panicking5panic17h194ce5d68a8f28a1E@PLT
+.Ltmp329:
+	.cfi_adjust_cfa_offset -4
+	addl	$12, %esp
+.Ltmp330:
+	.cfi_adjust_cfa_offset -12
+.Lfunc_end11:
+	.size	op_mod, .Lfunc_end11-op_mod
 	.cfi_endproc
 
 	.section	.text._ZN4main4main17h7409f745183f989cE,"ax",@progbits
@@ -1463,132 +1495,202 @@ _ZN4main4main17h7409f745183f989cE:
 	.cfi_personality 155, DW.ref.rust_eh_personality
 	.cfi_lsda 27, .Lexception0
 	pushl	%ebp
-.Ltmp334:
+.Ltmp346:
 	.cfi_def_cfa_offset 8
 	pushl	%ebx
-.Ltmp335:
+.Ltmp347:
 	.cfi_def_cfa_offset 12
 	pushl	%edi
-.Ltmp336:
+.Ltmp348:
 	.cfi_def_cfa_offset 16
 	pushl	%esi
-.Ltmp337:
+.Ltmp349:
 	.cfi_def_cfa_offset 20
-	subl	$4268, %esp
-.Ltmp338:
-	.cfi_def_cfa_offset 4288
-.Ltmp339:
+	subl	$4668, %esp
+.Ltmp350:
+	.cfi_def_cfa_offset 4688
+.Ltmp351:
 	.cfi_offset %esi, -20
-.Ltmp340:
+.Ltmp352:
 	.cfi_offset %edi, -16
-.Ltmp341:
+.Ltmp353:
 	.cfi_offset %ebx, -12
-.Ltmp342:
+.Ltmp354:
 	.cfi_offset %ebp, -8
-	calll	.L13$pb
-.Ltmp343:
+	calll	.L12$pb
+.Ltmp355:
 	.cfi_adjust_cfa_offset 4
-.L13$pb:
+.L12$pb:
 	popl	%ebx
-.Ltmp344:
+.Ltmp356:
 	.cfi_adjust_cfa_offset -4
-.Ltmp345:
-	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp345-.L13$pb), %ebx
-.Ltmp346:
+.Ltmp357:
+	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp357-.L12$pb), %ebx
+.Ltmp358:
 	.cfi_escape 0x2e, 0x10
 	subl	$8, %esp
-.Ltmp347:
+.Ltmp359:
 	.cfi_adjust_cfa_offset 8
 	pushl	$4
-.Ltmp348:
+.Ltmp360:
 	.cfi_adjust_cfa_offset 4
-	pushl	$52
-.Ltmp349:
+	pushl	$32
+.Ltmp361:
 	.cfi_adjust_cfa_offset 4
 	calll	__rust_allocate@PLT
 	addl	$16, %esp
-.Ltmp350:
+.Ltmp362:
 	.cfi_adjust_cfa_offset -16
 	movl	%eax, %esi
 	testl	%esi, %esi
-	je	.LBB13_1
-	leal	8(%esp), %eax
-	leal	2056(%esp), %ecx
-	movl	$775, (%esi)
-	movl	$-65017, 4(%esi)
-	movl	$655360007, 8(%esi)
-	movl	$6553863, 12(%esi)
-	movl	$16908546, 16(%esi)
-	movl	$67305732, 20(%esi)
-	movl	$525317, 24(%esi)
-	movl	$262145, 28(%esi)
-	movl	$131074, 32(%esi)
-	movl	$67305476, 36(%esi)
-	movl	$787461, 40(%esi)
-	movl	$196609, 44(%esi)
-	movl	$0, 48(%esi)
-	.p2align	4, 0x90
-.LBB13_4:
-	movzbl	7(%esp), %edx
-	movzwl	5(%esp), %ebp
-	movl	1(%esp), %edi
-	movb	$0, (%eax)
-	movb	%dl, 7(%eax)
-	movw	%bp, 5(%eax)
-	movl	%edi, 1(%eax)
-	addl	$8, %eax
-	cmpl	%ecx, %eax
-	jne	.LBB13_4
-.Ltmp351:
+	je	.LBB12_1
+	movl	$6, (%esi)
+	movl	$-65018, 4(%esi)
+	movl	$2752774, 8(%esi)
+	movl	$16908545, 12(%esi)
+	movl	$50331907, 16(%esi)
+	movl	$459524, 20(%esi)
+	movl	$196608, 24(%esi)
+	movl	$14, 28(%esi)
+.Ltmp331:
+.Ltmp363:
 	.cfi_escape 0x2e, 0x10
 	subl	$4, %esp
-.Ltmp352:
+.Ltmp364:
 	.cfi_adjust_cfa_offset 4
-	leal	12(%esp), %edi
-	leal	2220(%esp), %ebp
+	leal	ref.a@GOTOFF(%ebx), %eax
+	leal	2484(%esp), %ecx
+	pushl	$4
+.Ltmp365:
+	.cfi_adjust_cfa_offset 4
+	pushl	%eax
+.Ltmp366:
+	.cfi_adjust_cfa_offset 4
+	pushl	%ecx
+.Ltmp367:
+	.cfi_adjust_cfa_offset 4
+	calll	_ZN97_$LT$rand..chacha..ChaChaRng$u20$as$u20$rand..SeedableRng$LT$$RF$$u27$a$u20$$u5b$u32$u5d$$GT$$GT$9from_seed17h8ffc71e927c66de3E@PLT
+.Ltmp368:
+	.cfi_adjust_cfa_offset -4
+	addl	$12, %esp
+.Ltmp369:
+	.cfi_adjust_cfa_offset -12
+.Ltmp332:
+.Ltmp370:
+	.cfi_escape 0x2e, 0x10
+	subl	$8, %esp
+.Ltmp371:
+	.cfi_adjust_cfa_offset 8
+	pushl	$4
+.Ltmp372:
+	.cfi_adjust_cfa_offset 4
+	pushl	$32
+.Ltmp373:
+	.cfi_adjust_cfa_offset 4
+	calll	__rust_allocate@PLT
+	addl	$16, %esp
+.Ltmp374:
+	.cfi_adjust_cfa_offset -16
+	movl	%eax, %edi
+	testl	%edi, %edi
+	je	.LBB12_7
+	movl	(%esi), %eax
+	leal	2064(%esp), %ecx
+	movl	%eax, (%edi)
+	movl	4(%esi), %eax
+	movl	%eax, 4(%edi)
+	movl	8(%esi), %eax
+	movl	%eax, 8(%edi)
+	movl	12(%esi), %eax
+	movl	%eax, 12(%edi)
+	movl	16(%esi), %eax
+	movl	%eax, 16(%edi)
+	movl	20(%esi), %eax
+	movl	%eax, 20(%edi)
+	movl	24(%esi), %eax
+	movl	%eax, 24(%edi)
+	movl	28(%esi), %eax
+	movl	%eax, 28(%edi)
+	leal	16(%esp), %eax
+	.p2align	4, 0x90
+.LBB12_10:
+	movzbl	15(%esp), %edx
+	movb	$0, (%eax)
+	movl	9(%esp), %ebp
+	movb	%dl, 7(%eax)
+	movzwl	13(%esp), %edx
+	movw	%dx, 5(%eax)
+	movl	%ebp, 1(%eax)
+	addl	$8, %eax
+	cmpl	%ecx, %eax
+	jne	.LBB12_10
+.Ltmp375:
+	.cfi_escape 0x2e, 0x10
+	subl	$4, %esp
+.Ltmp376:
+	.cfi_adjust_cfa_offset 4
+	leal	20(%esp), %eax
+	leal	2620(%esp), %ebp
 	pushl	$2048
-.Ltmp353:
+.Ltmp377:
 	.cfi_adjust_cfa_offset 4
-	pushl	%edi
-.Ltmp354:
+	pushl	%eax
+.Ltmp378:
 	.cfi_adjust_cfa_offset 4
 	pushl	%ebp
-.Ltmp355:
+.Ltmp379:
 	.cfi_adjust_cfa_offset 4
 	calll	memcpy@PLT
 	addl	$16, %esp
-.Ltmp356:
+.Ltmp380:
 	.cfi_adjust_cfa_offset -16
-	leal	op_hlt@GOTOFF(%ebx), %eax
-	leal	op_jmp@GOTOFF(%ebx), %ecx
-	movl	$0, 8(%esp)
-	leal	op_addvn@GOTOFF(%ebx), %edx
-	movl	%eax, 12(%esp)
-	movl	%ecx, 16(%esp)
-	leal	op_add@GOTOFF(%ebx), %ecx
-	movl	%ecx, 20(%esp)
-	leal	op_mov@GOTOFF(%ebx), %ecx
-	movl	%ecx, 24(%esp)
-	leal	op_ceq@GOTOFF(%ebx), %ecx
-	movl	%ecx, 28(%esp)
-	leal	op_jit@GOTOFF(%ebx), %ecx
-	movl	%ecx, 32(%esp)
-	leal	op_ldb@GOTOFF(%ebx), %ecx
-	movl	%ecx, 36(%esp)
-	leal	op_ldi@GOTOFF(%ebx), %ecx
-	movl	%ecx, 40(%esp)
-	leal	op_ldr@GOTOFF(%ebx), %ecx
-	movl	%ecx, 44(%esp)
-	leal	op_lod@GOTOFF(%ebx), %ecx
-	movl	%ecx, 48(%esp)
-	leal	op_sto@GOTOFF(%ebx), %ecx
-	movl	%ecx, 52(%esp)
+.Ltmp381:
+	.cfi_escape 0x2e, 0x10
+	subl	$4, %esp
+.Ltmp382:
+	.cfi_adjust_cfa_offset 4
+	leal	2348(%esp), %ecx
+	pushl	$132
+.Ltmp383:
+	.cfi_adjust_cfa_offset 4
+	leal	2488(%esp), %eax
+	pushl	%eax
+.Ltmp384:
+	.cfi_adjust_cfa_offset 4
+	pushl	%ecx
+.Ltmp385:
+	.cfi_adjust_cfa_offset 4
+	calll	memcpy@PLT
+	addl	$16, %esp
+.Ltmp386:
+	.cfi_adjust_cfa_offset -16
+	leal	op_jmp@GOTOFF(%ebx), %eax
+	movl	$0, 16(%esp)
 	leal	op_cgt@GOTOFF(%ebx), %ecx
-	movl	%ecx, 56(%esp)
-	movl	%edx, 60(%esp)
-	movl	%eax, 64(%esp)
-	movl	%eax, 68(%esp)
-	movl	%eax, 72(%esp)
+	leal	op_mod@GOTOFF(%ebx), %edx
+	movl	%eax, 20(%esp)
+	leal	op_add@GOTOFF(%ebx), %eax
+	movl	%eax, 24(%esp)
+	leal	op_mov@GOTOFF(%ebx), %eax
+	movl	%eax, 28(%esp)
+	leal	op_ceq@GOTOFF(%ebx), %eax
+	movl	%eax, 32(%esp)
+	leal	op_jit@GOTOFF(%ebx), %eax
+	movl	%eax, 36(%esp)
+	leal	op_ldb@GOTOFF(%ebx), %eax
+	movl	%eax, 40(%esp)
+	leal	op_ldi@GOTOFF(%ebx), %eax
+	movl	%eax, 44(%esp)
+	leal	op_hlt@GOTOFF(%ebx), %eax
+	movl	%eax, 48(%esp)
+	movl	%eax, 52(%esp)
+	movl	%eax, 56(%esp)
+	movl	%ecx, 60(%esp)
+	leal	op_rnd@GOTOFF(%ebx), %ecx
+	movl	%ecx, 64(%esp)
+	leal	op_div@GOTOFF(%ebx), %ecx
+	movl	%ecx, 68(%esp)
+	movl	%edx, 72(%esp)
 	movl	%eax, 76(%esp)
 	movl	%eax, 80(%esp)
 	movl	%eax, 84(%esp)
@@ -1605,263 +1707,291 @@ _ZN4main4main17h7409f745183f989cE:
 	movl	%eax, 128(%esp)
 	movl	%eax, 132(%esp)
 	movl	%eax, 136(%esp)
-	movl	%esi, 140(%esp)
-	movl	$13, 144(%esp)
-	movl	$13, 148(%esp)
-	leal	152(%esp), %eax
-.Ltmp357:
+	movl	%eax, 140(%esp)
+	movl	%eax, 144(%esp)
+	movl	%edi, 148(%esp)
+	movl	$8, 152(%esp)
+	movl	$8, 156(%esp)
+	leal	160(%esp), %eax
+.Ltmp387:
 	.cfi_escape 0x2e, 0x10
 	subl	$4, %esp
-.Ltmp358:
+.Ltmp388:
 	.cfi_adjust_cfa_offset 4
 	pushl	$2048
-.Ltmp359:
+.Ltmp389:
 	.cfi_adjust_cfa_offset 4
 	pushl	%ebp
-.Ltmp360:
+.Ltmp390:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
-.Ltmp361:
+.Ltmp391:
 	.cfi_adjust_cfa_offset 4
 	calll	memcpy@PLT
 	addl	$16, %esp
-.Ltmp362:
+.Ltmp392:
 	.cfi_adjust_cfa_offset -16
-	movl	$1, 2200(%esp)
-	movl	$0, 2204(%esp)
-	movl	$0, 2208(%esp)
-	incl	8(%esp)
-	cmpl	$0, 148(%esp)
-	je	.LBB13_6
-	movl	140(%esp), %eax
+	leal	2208(%esp), %eax
+.Ltmp393:
+	.cfi_escape 0x2e, 0x10
+	subl	$4, %esp
+.Ltmp394:
+	.cfi_adjust_cfa_offset 4
+	pushl	$132
+.Ltmp395:
+	.cfi_adjust_cfa_offset 4
+	leal	2352(%esp), %ecx
+	pushl	%ecx
+.Ltmp396:
+	.cfi_adjust_cfa_offset 4
+	pushl	%eax
+.Ltmp397:
+	.cfi_adjust_cfa_offset 4
+	calll	memcpy@PLT
+	addl	$16, %esp
+.Ltmp398:
+	.cfi_adjust_cfa_offset -16
+.Ltmp399:
+	.cfi_escape 0x2e, 0x10
+	subl	$4, %esp
+.Ltmp400:
+	.cfi_adjust_cfa_offset 4
+	pushl	$4
+.Ltmp401:
+	.cfi_adjust_cfa_offset 4
+	pushl	$32
+.Ltmp402:
+	.cfi_adjust_cfa_offset 4
+	pushl	%esi
+.Ltmp403:
+	.cfi_adjust_cfa_offset 4
+	calll	__rust_deallocate@PLT
+	addl	$16, %esp
+.Ltmp404:
+	.cfi_adjust_cfa_offset -16
+	incl	16(%esp)
+	cmpl	$0, 156(%esp)
+	je	.LBB12_12
+	movl	148(%esp), %eax
 	movl	(%eax), %eax
 	movzbl	%al, %ecx
 	cmpl	$32, %ecx
-	jae	.LBB13_9
-	movl	12(%esp,%ecx,4), %ecx
-.Ltmp326:
-.Ltmp363:
+	jae	.LBB12_15
+	movl	20(%esp,%ecx,4), %ecx
+.Ltmp335:
+.Ltmp405:
 	.cfi_escape 0x2e, 0x10
 	subl	$4, %esp
-.Ltmp364:
+.Ltmp406:
 	.cfi_adjust_cfa_offset 4
 	pushl	$0
-.Ltmp365:
+.Ltmp407:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
-.Ltmp366:
+.Ltmp408:
 	.cfi_adjust_cfa_offset 4
-	pushl	%edi
-.Ltmp367:
+	leal	28(%esp), %eax
+	pushl	%eax
+.Ltmp409:
 	.cfi_adjust_cfa_offset 4
 	calll	*%ecx
 	addl	$16, %esp
-.Ltmp368:
+.Ltmp410:
 	.cfi_adjust_cfa_offset -16
-.Ltmp327:
-	movl	144(%esp), %eax
+.Ltmp336:
+	movl	152(%esp), %eax
 	testl	%eax, %eax
-	je	.LBB13_14
+	je	.LBB12_20
 	shll	$2, %eax
-.Ltmp369:
+.Ltmp411:
 	.cfi_escape 0x2e, 0x10
 	subl	$4, %esp
-.Ltmp370:
+.Ltmp412:
 	.cfi_adjust_cfa_offset 4
 	pushl	$4
-.Ltmp371:
+.Ltmp413:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
-.Ltmp372:
+.Ltmp414:
 	.cfi_adjust_cfa_offset 4
-	pushl	152(%esp)
-.Ltmp373:
+	pushl	160(%esp)
+.Ltmp415:
 	.cfi_adjust_cfa_offset 4
 	calll	__rust_deallocate@PLT
 	addl	$16, %esp
-.Ltmp374:
+.Ltmp416:
 	.cfi_adjust_cfa_offset -16
-.LBB13_14:
-	movl	2204(%esp), %eax
-	testl	%eax, %eax
-	je	.LBB13_16
-	shll	$3, %eax
-.Ltmp375:
-	.cfi_escape 0x2e, 0x10
-	subl	$4, %esp
-.Ltmp376:
-	.cfi_adjust_cfa_offset 4
-	pushl	$4
-.Ltmp377:
-	.cfi_adjust_cfa_offset 4
-	pushl	%eax
-.Ltmp378:
-	.cfi_adjust_cfa_offset 4
-	pushl	2212(%esp)
-.Ltmp379:
-	.cfi_adjust_cfa_offset 4
-	calll	__rust_deallocate@PLT
-	addl	$16, %esp
-.Ltmp380:
-	.cfi_adjust_cfa_offset -16
-.LBB13_16:
-	addl	$4268, %esp
+.LBB12_20:
+	addl	$4668, %esp
 	popl	%esi
 	popl	%edi
 	popl	%ebx
 	popl	%ebp
 	retl
-.LBB13_1:
-.Ltmp331:
-.Ltmp381:
+.LBB12_1:
+.Ltmp343:
+.Ltmp417:
 	.cfi_escape 0x2e, 0x00
 	calll	_ZN5alloc3oom3oom17he12d244509df7328E@PLT
-.Ltmp332:
-.LBB13_6:
-.Ltmp328:
-.Ltmp382:
+.Ltmp344:
+.LBB12_7:
+.Ltmp340:
+.Ltmp418:
+	.cfi_escape 0x2e, 0x00
+	calll	_ZN5alloc3oom3oom17he12d244509df7328E@PLT
+.Ltmp341:
+.LBB12_12:
+.Ltmp337:
+.Ltmp419:
 	.cfi_escape 0x2e, 0x10
 	subl	$4, %esp
-.Ltmp383:
+.Ltmp420:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.2@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.7@GOTOFF(%ebx), %eax
 	pushl	$0
-.Ltmp384:
+.Ltmp421:
 	.cfi_adjust_cfa_offset 4
 	pushl	$0
-.Ltmp385:
+.Ltmp422:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
-.Ltmp386:
+.Ltmp423:
 	.cfi_adjust_cfa_offset 4
 	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp387:
+.Ltmp424:
 	.cfi_adjust_cfa_offset -12
 	addl	$4, %esp
-.Ltmp388:
+.Ltmp425:
 	.cfi_adjust_cfa_offset -4
-.Ltmp329:
-.LBB13_9:
-.Ltmp324:
-.Ltmp389:
+.Ltmp338:
+.LBB12_15:
+.Ltmp333:
+.Ltmp426:
 	.cfi_escape 0x2e, 0x10
 	subl	$4, %esp
-.Ltmp390:
+.Ltmp427:
 	.cfi_adjust_cfa_offset 4
-	leal	panic_bounds_check_loc.v@GOTOFF(%ebx), %eax
+	leal	panic_bounds_check_loc.F@GOTOFF(%ebx), %eax
 	pushl	$32
-.Ltmp391:
+.Ltmp428:
 	.cfi_adjust_cfa_offset 4
 	pushl	%ecx
-.Ltmp392:
+.Ltmp429:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
-.Ltmp393:
+.Ltmp430:
 	.cfi_adjust_cfa_offset 4
 	calll	_ZN4core9panicking18panic_bounds_check17h7d966cc89f07df40E@PLT
-.Ltmp394:
+.Ltmp431:
 	.cfi_adjust_cfa_offset -12
 	addl	$4, %esp
-.Ltmp395:
+.Ltmp432:
 	.cfi_adjust_cfa_offset -4
-.Ltmp325:
-.LBB13_22:
-.Ltmp333:
-	movl	%eax, %esi
-	jmp	.LBB13_21
-.LBB13_17:
-.Ltmp330:
-	movl	%eax, %esi
-	movl	144(%esp), %eax
+.Ltmp334:
+.LBB12_3:
+.Ltmp345:
+	movl	%eax, %edi
+	jmp	.LBB12_4
+.LBB12_21:
+.Ltmp339:
+	movl	%eax, %edi
+	movl	152(%esp), %eax
 	testl	%eax, %eax
-	je	.LBB13_19
+	je	.LBB12_4
 	shll	$2, %eax
-.Ltmp396:
+.Ltmp433:
 	.cfi_escape 0x2e, 0x10
 	subl	$4, %esp
-.Ltmp397:
+.Ltmp434:
 	.cfi_adjust_cfa_offset 4
 	pushl	$4
-.Ltmp398:
+.Ltmp435:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
-.Ltmp399:
+.Ltmp436:
 	.cfi_adjust_cfa_offset 4
-	pushl	152(%esp)
-.Ltmp400:
+	pushl	160(%esp)
+.Ltmp437:
 	.cfi_adjust_cfa_offset 4
 	calll	__rust_deallocate@PLT
 	addl	$16, %esp
-.Ltmp401:
+.Ltmp438:
 	.cfi_adjust_cfa_offset -16
-.LBB13_19:
-	movl	2204(%esp), %eax
-	testl	%eax, %eax
-	je	.LBB13_21
-	shll	$3, %eax
-.Ltmp402:
+	jmp	.LBB12_4
+.LBB12_23:
+.Ltmp342:
+	movl	%eax, %edi
+.Ltmp439:
 	.cfi_escape 0x2e, 0x10
 	subl	$4, %esp
-.Ltmp403:
+.Ltmp440:
 	.cfi_adjust_cfa_offset 4
 	pushl	$4
-.Ltmp404:
+.Ltmp441:
 	.cfi_adjust_cfa_offset 4
-	pushl	%eax
-.Ltmp405:
+	pushl	$32
+.Ltmp442:
 	.cfi_adjust_cfa_offset 4
-	pushl	2212(%esp)
-.Ltmp406:
+	pushl	%esi
+.Ltmp443:
 	.cfi_adjust_cfa_offset 4
 	calll	__rust_deallocate@PLT
 	addl	$16, %esp
-.Ltmp407:
+.Ltmp444:
 	.cfi_adjust_cfa_offset -16
-.LBB13_21:
-.Ltmp408:
+.LBB12_4:
+.Ltmp445:
 	.cfi_escape 0x2e, 0x10
 	subl	$12, %esp
-.Ltmp409:
+.Ltmp446:
 	.cfi_adjust_cfa_offset 12
-	pushl	%esi
-.Ltmp410:
+	pushl	%edi
+.Ltmp447:
 	.cfi_adjust_cfa_offset 4
 	calll	_Unwind_Resume@PLT
-.Ltmp411:
+.Ltmp448:
 	.cfi_adjust_cfa_offset -4
 	addl	$12, %esp
-.Ltmp412:
+.Ltmp449:
 	.cfi_adjust_cfa_offset -12
-.Lfunc_end13:
-	.size	_ZN4main4main17h7409f745183f989cE, .Lfunc_end13-_ZN4main4main17h7409f745183f989cE
+.Lfunc_end12:
+	.size	_ZN4main4main17h7409f745183f989cE, .Lfunc_end12-_ZN4main4main17h7409f745183f989cE
 	.cfi_endproc
 	.section	.gcc_except_table,"a",@progbits
 	.p2align	2
-GCC_except_table13:
+GCC_except_table12:
 .Lexception0:
 	.byte	255
 	.byte	155
-	.asciz	"\303\200"
+	.byte	93
 	.byte	3
-	.byte	65
-	.long	.Lfunc_begin0-.Lfunc_begin0
-	.long	.Ltmp326-.Lfunc_begin0
-	.long	0
-	.byte	0
-	.long	.Ltmp326-.Lfunc_begin0
-	.long	.Ltmp327-.Ltmp326
-	.long	.Ltmp330-.Lfunc_begin0
-	.byte	0
+	.byte	91
 	.long	.Ltmp331-.Lfunc_begin0
 	.long	.Ltmp332-.Ltmp331
-	.long	.Ltmp333-.Lfunc_begin0
+	.long	.Ltmp342-.Lfunc_begin0
 	.byte	0
-	.long	.Ltmp328-.Lfunc_begin0
-	.long	.Ltmp325-.Ltmp328
-	.long	.Ltmp330-.Lfunc_begin0
+	.long	.Ltmp332-.Lfunc_begin0
+	.long	.Ltmp335-.Ltmp332
+	.long	0
 	.byte	0
-	.long	.Ltmp325-.Lfunc_begin0
-	.long	.Lfunc_end13-.Ltmp325
+	.long	.Ltmp335-.Lfunc_begin0
+	.long	.Ltmp336-.Ltmp335
+	.long	.Ltmp339-.Lfunc_begin0
+	.byte	0
+	.long	.Ltmp343-.Lfunc_begin0
+	.long	.Ltmp344-.Ltmp343
+	.long	.Ltmp345-.Lfunc_begin0
+	.byte	0
+	.long	.Ltmp340-.Lfunc_begin0
+	.long	.Ltmp341-.Ltmp340
+	.long	.Ltmp342-.Lfunc_begin0
+	.byte	0
+	.long	.Ltmp337-.Lfunc_begin0
+	.long	.Ltmp334-.Ltmp337
+	.long	.Ltmp339-.Lfunc_begin0
+	.byte	0
+	.long	.Ltmp334-.Lfunc_begin0
+	.long	.Lfunc_end12-.Ltmp334
 	.long	0
 	.byte	0
 	.p2align	2
@@ -1873,84 +2003,181 @@ GCC_except_table13:
 main:
 	.cfi_startproc
 	pushl	%ebx
-.Ltmp413:
+.Ltmp450:
 	.cfi_def_cfa_offset 8
 	subl	$8, %esp
-.Ltmp414:
+.Ltmp451:
 	.cfi_def_cfa_offset 16
-.Ltmp415:
+.Ltmp452:
 	.cfi_offset %ebx, -8
-	calll	.L14$pb
-.Ltmp416:
+	calll	.L13$pb
+.Ltmp453:
 	.cfi_adjust_cfa_offset 4
-.L14$pb:
+.L13$pb:
 	popl	%ebx
-.Ltmp417:
+.Ltmp454:
 	.cfi_adjust_cfa_offset -4
-.Ltmp418:
-	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp418-.L14$pb), %ebx
+.Ltmp455:
+	addl	$_GLOBAL_OFFSET_TABLE_+(.Ltmp455-.L13$pb), %ebx
 	subl	$4, %esp
-.Ltmp419:
+.Ltmp456:
 	.cfi_adjust_cfa_offset 4
 	leal	_ZN4main4main17h7409f745183f989cE@GOTOFF(%ebx), %eax
 	pushl	24(%esp)
-.Ltmp420:
+.Ltmp457:
 	.cfi_adjust_cfa_offset 4
 	pushl	24(%esp)
-.Ltmp421:
+.Ltmp458:
 	.cfi_adjust_cfa_offset 4
 	pushl	%eax
-.Ltmp422:
+.Ltmp459:
 	.cfi_adjust_cfa_offset 4
 	calll	_ZN3std2rt10lang_start17h5d71a3afaaa4b2ffE@PLT
 	addl	$24, %esp
-.Ltmp423:
+.Ltmp460:
 	.cfi_adjust_cfa_offset -16
 	popl	%ebx
 	retl
-.Lfunc_end14:
-	.size	main, .Lfunc_end14-main
+.Lfunc_end13:
+	.size	main, .Lfunc_end13-main
 	.cfi_endproc
 
-	.type	str.1,@object
-	.section	.rodata.str.1,"a",@progbits
+	.type	str.3,@object
+	.section	.rodata.str.3,"a",@progbits
 	.p2align	4
-str.1:
-	.ascii	"../src/libcollections/vec.rs"
-	.size	str.1, 28
+str.3:
+	.ascii	"../src/librand/distributions/range.rs"
+	.size	str.3, 37
 
-	.type	panic_bounds_check_loc.2,@object
-	.section	.data.rel.ro.panic_bounds_check_loc.2,"aw",@progbits
+	.type	str.4,@object
+	.section	.rodata.str.4,"a",@progbits
+	.p2align	4
+str.4:
+	.ascii	"attempt to calculate the remainder with a divisor of zero"
+	.size	str.4, 57
+
+	.type	panic_loc.5,@object
+	.section	.data.rel.ro.panic_loc.5,"aw",@progbits
 	.p2align	2
-panic_bounds_check_loc.2:
-	.long	str.1
+panic_loc.5:
+	.long	str.4
+	.long	57
+	.long	str.3
+	.long	37
+	.long	110
+	.size	panic_loc.5, 20
+
+	.type	str.6,@object
+	.section	.rodata.str.6,"a",@progbits
+	.p2align	4
+str.6:
+	.ascii	"../src/libcollections/vec.rs"
+	.size	str.6, 28
+
+	.type	panic_bounds_check_loc.7,@object
+	.section	.data.rel.ro.panic_bounds_check_loc.7,"aw",@progbits
+	.p2align	2
+panic_bounds_check_loc.7:
+	.long	str.6
 	.long	28
 	.long	1362
-	.size	panic_bounds_check_loc.2, 12
+	.size	panic_bounds_check_loc.7, 12
 
-	.type	panic_bounds_check_loc.3,@object
-	.section	.data.rel.ro.panic_bounds_check_loc.3,"aw",@progbits
+	.type	str.8,@object
+	.section	.rodata.str.8,"a",@progbits
+	.p2align	4
+str.8:
+	.ascii	"attempt to divide by zero"
+	.size	str.8, 25
+
+	.type	ref.a,@object
+	.section	.rodata.cst16,"aM",@progbits,16
 	.p2align	2
-panic_bounds_check_loc.3:
-	.long	str.1
-	.long	28
-	.long	1371
-	.size	panic_bounds_check_loc.3, 12
+ref.a:
+	.long	1
+	.long	2
+	.long	3
+	.long	4
+	.size	ref.a, 16
 
-	.type	str.u,@object
-	.section	.rodata.str.u,"a",@progbits
-str.u:
+	.type	str.b,@object
+	.section	.rodata.str.b,"a",@progbits
+str.b:
+	.ascii	"src/vm.rs"
+	.size	str.b, 9
+
+	.type	panic_loc.s,@object
+	.section	.data.rel.ro.panic_loc.s,"aw",@progbits
+	.p2align	2
+panic_loc.s:
+	.long	str.8
+	.long	25
+	.long	str.b
+	.long	9
+	.long	221
+	.size	panic_loc.s, 20
+
+	.type	str.t,@object
+	.section	.rodata.str.t,"a",@progbits
+	.p2align	4
+str.t:
+	.ascii	"attempt to divide with overflow"
+	.size	str.t, 31
+
+	.type	panic_loc.u,@object
+	.section	.data.rel.ro.panic_loc.u,"aw",@progbits
+	.p2align	2
+panic_loc.u:
+	.long	str.t
+	.long	31
+	.long	str.b
+	.long	9
+	.long	221
+	.size	panic_loc.u, 20
+
+	.type	panic_loc.z,@object
+	.section	.data.rel.ro.panic_loc.z,"aw",@progbits
+	.p2align	2
+panic_loc.z:
+	.long	str.4
+	.long	57
+	.long	str.b
+	.long	9
+	.long	236
+	.size	panic_loc.z, 20
+
+	.type	str.A,@object
+	.section	.rodata.str.A,"a",@progbits
+	.p2align	4
+str.A:
+	.ascii	"attempt to calculate the remainder with overflow"
+	.size	str.A, 48
+
+	.type	panic_loc.B,@object
+	.section	.data.rel.ro.panic_loc.B,"aw",@progbits
+	.p2align	2
+panic_loc.B:
+	.long	str.A
+	.long	48
+	.long	str.b
+	.long	9
+	.long	236
+	.size	panic_loc.B, 20
+
+	.type	str.E,@object
+	.section	.rodata.str.E,"a",@progbits
+str.E:
 	.ascii	"src/threaded.rs"
-	.size	str.u, 15
+	.size	str.E, 15
 
-	.type	panic_bounds_check_loc.v,@object
-	.section	.data.rel.ro.panic_bounds_check_loc.v,"aw",@progbits
+	.type	panic_bounds_check_loc.F,@object
+	.section	.data.rel.ro.panic_bounds_check_loc.F,"aw",@progbits
 	.p2align	2
-panic_bounds_check_loc.v:
-	.long	str.u
+panic_bounds_check_loc.F:
+	.long	str.E
 	.long	15
-	.long	69
-	.size	panic_bounds_check_loc.v, 12
+	.long	68
+	.size	panic_bounds_check_loc.F, 12
 
 	.hidden	DW.ref.rust_eh_personality
 	.weak	DW.ref.rust_eh_personality

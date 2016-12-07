@@ -19,6 +19,6 @@ use vm::Thread;
 
 
 fn main() {
-//    let mut thread = switch::SwitchThread::new(&fixture::simple_loop());
-//    thread.run();
+    let mut thread = threadedasm::ThreadedAsmThread::new(&fixture::simple_loop());
+    thread.run();
 }
