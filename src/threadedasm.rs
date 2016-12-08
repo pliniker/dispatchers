@@ -56,58 +56,6 @@ macro_rules! label_addr {
 }
 
 
-#[cfg(target_arch = "x86")]
-macro_rules! label_addr {
-    ($name:expr) => (
-        {
-            let addr: usize;
-            unsafe { asm!(concat!("lea ", $name, ", $0")
-                          : "=&r"(addr)
-                          :
-                          :
-                          : "volatile" );
-            }
-            addr
-        }
-    )
-}
-
-
-#[cfg(target_arch = "aarch64")]
-macro_rules! label_addr {
-    ($name:expr) => (
-        {
-            let addr: usize;
-            unsafe { asm!(concat!("adrp $0, ", $name, "\n",
-                                  "add $0, $0, :lo12:", $name)
-                          : "=&r"(addr)
-                          :
-                          :
-                          : "volatile" );
-            }
-            addr
-        }
-    )
-}
-
-
-#[cfg(target_arch = "arm")]
-macro_rules! label_addr {
-    ($name:expr) => (
-        {
-            let addr: usize;
-            unsafe { asm!(concat!("adr $0, ", $name)
-                          : "=&r"(addr)
-                          :
-                          :
-                          : "volatile" );
-            }
-            addr
-        }
-    )
-}
-
-
 /// Reads the address of the next instruction from the jump table and jumps there.
 #[cfg(target_arch = "x86_64")]
 macro_rules! dispatch {
@@ -123,60 +71,6 @@ macro_rules! dispatch {
             asm!("jmpq *$0"
                  :
                  : "r"(addr), "{r15d}"($counter), "{ecx}"($opcode), "{rdx}"($pc)
-                 :
-                 : "volatile"
-            );
-        }
-    }
-}
-
-
-#[cfg(target_arch = "x86")]
-macro_rules! dispatch {
-    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
-        $counter += 1;
-        let addr = $jumptable[operator($opcode) as usize];
-
-        unsafe {
-            asm!("jmpl *$0"
-                 :
-                 : "r"(addr), "{edi}"($counter), "{ecx}"($opcode), "{edx}"($pc)
-                 :
-                 : "volatile"
-            );
-        }
-    }
-}
-
-
-#[cfg(target_arch = "aarch64")]
-macro_rules! dispatch {
-    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
-        $counter += 1;
-        let addr = $jumptable[operator($opcode) as usize];
-
-        unsafe {
-            asm!("br $0"
-                 :
-                 : "r"(addr), "{x11}"($counter), "{w9}"($opcode), "{x10}"($pc)
-                 :
-                 : "volatile"
-            );
-        }
-    }
-}
-
-
-#[cfg(target_arch = "arm")]
-macro_rules! dispatch {
-    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
-        $counter += 1;
-        let addr = $jumptable[operator($opcode) as usize];
-
-        unsafe {
-            asm!("bx $0"
-                 :
-                 : "r"(addr), "{r11}"($counter), "{r8}"($opcode), "{r10}"($pc)
                  :
                  : "volatile"
             );
@@ -216,6 +110,41 @@ macro_rules! do_and_dispatch {
 
 
 #[cfg(target_arch = "x86")]
+macro_rules! label_addr {
+    ($name:expr) => (
+        {
+            let addr: usize;
+            unsafe { asm!(concat!("lea ", $name, ", $0")
+                          : "=&r"(addr)
+                          :
+                          :
+                          : "volatile" );
+            }
+            addr
+        }
+    )
+}
+
+
+#[cfg(target_arch = "x86")]
+macro_rules! dispatch {
+    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
+        $counter += 1;
+        let addr = $jumptable[operator($opcode) as usize];
+
+        unsafe {
+            asm!("jmpl *$0"
+                 :
+                 : "r"(addr), "{edi}"($counter), "{ecx}"($opcode), "{edx}"($pc)
+                 :
+                 : "volatile"
+            );
+        }
+    }
+}
+
+
+#[cfg(target_arch = "x86")]
 macro_rules! do_and_dispatch {
     ($jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
 
@@ -232,6 +161,42 @@ macro_rules! do_and_dispatch {
         }
 
         dispatch!($pc, $opcode, $jumptable, $counter);
+    }
+}
+
+
+#[cfg(target_arch = "aarch64")]
+macro_rules! label_addr {
+    ($name:expr) => (
+        {
+            let addr: usize;
+            unsafe { asm!(concat!("adrp $0, ", $name, "\n",
+                                  "add $0, $0, :lo12:", $name)
+                          : "=&r"(addr)
+                          :
+                          :
+                          : "volatile" );
+            }
+            addr
+        }
+    )
+}
+
+
+#[cfg(target_arch = "aarch64")]
+macro_rules! dispatch {
+    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
+        $counter += 1;
+        let addr = $jumptable[operator($opcode) as usize];
+
+        unsafe {
+            asm!("br $0"
+                 :
+                 : "r"(addr), "{x11}"($counter), "{w9}"($opcode), "{x10}"($pc)
+                 :
+                 : "volatile"
+            );
+        }
     }
 }
 
@@ -258,12 +223,53 @@ macro_rules! do_and_dispatch {
 
 
 #[cfg(target_arch = "arm")]
+macro_rules! label_addr {
+    ($name:expr) => (
+        {
+            // https://llvm.org/bugs/show_bug.cgi?id=24350
+
+            let addr: usize;
+            unsafe { asm!(//concat!("adr $0, 1f
+                          //         add $0, $0, #(", $name, "-1f)
+                          //         1:")
+                          concat!("add $0, pc, #(", $name, " - .) & 0xFF00
+                                   add $0, $0, #((", $name, " - .) - ((", $name, " - .) & 0xFF00)) - 4")
+                          : "=&r"(addr)
+                          :
+                          :
+                          : "volatile" );
+            }
+            addr
+        }
+    )
+}
+
+
+#[cfg(target_arch = "arm")]
+macro_rules! dispatch {
+    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
+        $counter += 1;
+        let addr = $jumptable[operator($opcode) as usize];
+
+        unsafe {
+            asm!("bx $0"
+                 :
+                 : "r"(addr), "{r11}"($counter), "{r9}"($opcode), "{r10}"($pc)
+                 :
+                 : "volatile"
+            );
+        }
+    }
+}
+
+
+#[cfg(target_arch = "arm")]
 macro_rules! do_and_dispatch {
     ($jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
 
         unsafe {
             asm!(concat!($name, ":")
-                 : "={r11}"($counter), "={r8}"($opcode), "={r10}"($pc)
+                 : "={r11}"($counter), "={r9}"($opcode), "={r10}"($pc)
                  :
                  :
                  : "volatile");
@@ -309,7 +315,6 @@ impl Thread for ThreadedAsmThread {
         // invalid pointer values
         let mut ops: [usize; 32] = [label_addr!("goto_hlt"); 32];
 
-        ops[ops::HLT as usize] = label_addr!("goto_hlt");
         ops[ops::JMP as usize] = label_addr!("goto_jmp");
         ops[ops::ADD as usize] = label_addr!("goto_add");
         ops[ops::MOV as usize] = label_addr!("goto_mov");
@@ -321,6 +326,7 @@ impl Thread for ThreadedAsmThread {
         ops[ops::RND as usize] = label_addr!("goto_rnd");
         ops[ops::DIV as usize] = label_addr!("goto_div");
         ops[ops::MOD as usize] = label_addr!("goto_mod");
+        ops[ops::HLT as usize] = label_addr!("goto_hlt");
 
         let mut pc = 0;
         let mut opcode = self.inner.fetch(pc);
