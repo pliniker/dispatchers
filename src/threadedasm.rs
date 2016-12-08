@@ -164,6 +164,8 @@ macro_rules! do_and_dispatch {
     }
 }
 
+// TODO the aarch64 and arm targets are broken because more variables
+// need to be pinned to registers
 
 #[cfg(target_arch = "aarch64")]
 macro_rules! label_addr {
