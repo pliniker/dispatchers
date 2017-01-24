@@ -282,7 +282,7 @@ macro_rules! do_and_dispatch {
             $action
         }
 
-        dispatch!($pc, $opcode, $jumptable, $counter);
+        dispatch!($vm, $pc, $opcode, $jumptable, $counter);
     }
 }
 

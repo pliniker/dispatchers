@@ -13,7 +13,7 @@ extern crate test;
 use vm::{Image, Thread, ThreadInner, Opcode, operator, ops};
 
 
-pub type Instr = fn(code: &mut ThreadedThread, opcode: Opcode, pc: usize);
+pub type Instr = fn(code: &mut ThreadedThread, opcode: Opcode, pc: usize, counter: usize);
 
 
 pub struct ThreadedThread {
@@ -55,99 +55,100 @@ impl Thread for ThreadedThread {
     }
 
     fn run(&mut self) {
-        self.next(0);
+        self.next(0, 0);
     }
 }
 
 
 impl ThreadedThread {
     #[inline(always)]
-    fn next(&mut self, pc: usize) {
-        self.counter += 1;
+    fn next(&mut self, pc: usize, counter: usize) {
         let opcode = self.inner.fetch(pc);
-        (self.ops[operator(opcode) as usize])(self, opcode, pc)
+        (self.ops[operator(opcode) as usize])(self, opcode, pc, counter + 1)
     }
 }
 
 
 #[no_mangle]
-fn op_hlt(_: &mut ThreadedThread, _: Opcode, _: usize) {}
+fn op_hlt(thread: &mut ThreadedThread, _: Opcode, _: usize, counter: usize) {
+    thread.counter = counter;
+}
 
 
 #[no_mangle]
-fn op_jmp(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+fn op_jmp(thread: &mut ThreadedThread, opcode: Opcode, pc: usize, counter: usize) {
     let pc = thread.inner.op_jmp(opcode, pc);
-    thread.next(pc)
+    thread.next(pc, counter)
 }
 
 
 #[no_mangle]
-fn op_add(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+fn op_add(thread: &mut ThreadedThread, opcode: Opcode, pc: usize, counter: usize) {
     let pc = thread.inner.op_add(opcode, pc);
-    thread.next(pc)
+    thread.next(pc, counter)
 }
 
 
 #[no_mangle]
-fn op_mov(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+fn op_mov(thread: &mut ThreadedThread, opcode: Opcode, pc: usize, counter: usize) {
     let pc = thread.inner.op_mov(opcode, pc);
-    thread.next(pc)
+    thread.next(pc, counter)
 }
 
 
 #[no_mangle]
-fn op_ceq(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+fn op_ceq(thread: &mut ThreadedThread, opcode: Opcode, pc: usize, counter: usize) {
     let pc = thread.inner.op_ceq(opcode, pc);
-    thread.next(pc)
+    thread.next(pc, counter)
 }
 
 
 #[no_mangle]
-fn op_jit(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+fn op_jit(thread: &mut ThreadedThread, opcode: Opcode, pc: usize, counter: usize) {
     let (pc, _) = thread.inner.op_jit(opcode, pc);
-    thread.next(pc)
+    thread.next(pc, counter)
 }
 
 
 #[no_mangle]
-fn op_ldb(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+fn op_ldb(thread: &mut ThreadedThread, opcode: Opcode, pc: usize, counter: usize) {
     let pc = thread.inner.op_ldb(opcode, pc);
-    thread.next(pc)
+    thread.next(pc, counter)
 }
 
 
 #[no_mangle]
-fn op_ldi(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+fn op_ldi(thread: &mut ThreadedThread, opcode: Opcode, pc: usize, counter: usize) {
     let pc = thread.inner.op_ldi(opcode, pc);
-    thread.next(pc)
+    thread.next(pc, counter)
 }
 
 
 #[no_mangle]
-fn op_cgt(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+fn op_cgt(thread: &mut ThreadedThread, opcode: Opcode, pc: usize, counter: usize) {
     let pc = thread.inner.op_cgt(opcode, pc);
-    thread.next(pc)
+    thread.next(pc, counter)
 }
 
 
 #[no_mangle]
-fn op_rnd(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+fn op_rnd(thread: &mut ThreadedThread, opcode: Opcode, pc: usize, counter: usize) {
     let pc = thread.inner.op_rnd(opcode, pc);
-    thread.next(pc)
+    thread.next(pc, counter)
 }
 
 
 #[no_mangle]
-fn op_div(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+fn op_div(thread: &mut ThreadedThread, opcode: Opcode, pc: usize, counter: usize) {
     let pc = thread.inner.op_div(opcode, pc);
-    thread.next(pc)
+    thread.next(pc, counter)
 }
 
 
 #[no_mangle]
-fn op_mod(thread: &mut ThreadedThread, opcode: Opcode, pc: usize) {
+fn op_mod(thread: &mut ThreadedThread, opcode: Opcode, pc: usize, counter: usize) {
     let pc = thread.inner.op_mod(opcode, pc);
-    thread.next(pc)
+    thread.next(pc, counter)
 }
 
 
