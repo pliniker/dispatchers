@@ -59,7 +59,7 @@ macro_rules! label_addr {
 /// Reads the address of the next instruction from the jump table and jumps there.
 #[cfg(target_arch = "x86_64")]
 macro_rules! dispatch {
-    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
+    ($vm:expr, $pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
         $counter += 1;
         let addr = $jumptable[operator($opcode) as usize];
 
@@ -70,7 +70,7 @@ macro_rules! dispatch {
             // to locals mapping
             asm!("jmpq *$0"
                  :
-                 : "r"(addr), "{r15d}"($counter), "{ecx}"($opcode), "{rdx}"($pc)
+                 : "r"(addr), "{r8d}"($counter), "{ecx}"($opcode), "{rdx}"($pc)
                  :
                  : "volatile"
             );
@@ -88,13 +88,13 @@ macro_rules! dispatch {
 ///  * $action must be a block containing the VM instruction code
 #[cfg(target_arch = "x86_64")]
 macro_rules! do_and_dispatch {
-    ($jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
+    ($vm:expr, $jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
 
         // the outputs of this asm block essentially force these locals to
         // be in the specified registers when $action is entered
         unsafe {
             asm!(concat!($name, ":")
-                 : "={r15d}"($counter), "={ecx}"($opcode), "={rdx}"($pc)
+                 : "={r8d}"($counter), "={ecx}"($opcode), "={rdx}"($pc)
                  :
                  :
                  : "volatile");
@@ -104,7 +104,7 @@ macro_rules! do_and_dispatch {
             $action
         }
 
-        dispatch!($pc, $opcode, $jumptable, $counter);
+        dispatch!($vm, $pc, $opcode, $jumptable, $counter);
     }
 }
 
@@ -128,7 +128,7 @@ macro_rules! label_addr {
 
 #[cfg(target_arch = "x86")]
 macro_rules! dispatch {
-    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
+    ($vm:expr, $pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
         $counter += 1;
         let addr = $jumptable[operator($opcode) as usize];
 
@@ -146,7 +146,7 @@ macro_rules! dispatch {
 
 #[cfg(target_arch = "x86")]
 macro_rules! do_and_dispatch {
-    ($jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
+    ($vm:expr, $jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
 
         unsafe {
             asm!(concat!($name, ":")
@@ -160,12 +160,10 @@ macro_rules! do_and_dispatch {
             $action
         }
 
-        dispatch!($pc, $opcode, $jumptable, $counter);
+        dispatch!($vm, $pc, $opcode, $jumptable, $counter);
     }
 }
 
-// TODO the aarch64 and arm targets are broken because more variables
-// need to be pinned to registers
 
 #[cfg(target_arch = "aarch64")]
 macro_rules! label_addr {
@@ -187,14 +185,17 @@ macro_rules! label_addr {
 
 #[cfg(target_arch = "aarch64")]
 macro_rules! dispatch {
-    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
+    ($vm:expr, $pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
         $counter += 1;
         let addr = $jumptable[operator($opcode) as usize];
 
+        // Pinning $vm to x12 doesn't seem actually use x12 in a useful way, but it does
+        // somehow accidentally make llvm allocate registers consistently.
+        // I think there may be a better solution, though.
         unsafe {
             asm!("br $0"
                  :
-                 : "r"(addr), "{x11}"($counter), "{w9}"($opcode), "{x10}"($pc)
+                 : "r"(addr), "{x11}"($counter), "{w9}"($opcode), "{x10}"($pc), "{x12}"($vm)
                  :
                  : "volatile"
             );
@@ -205,11 +206,11 @@ macro_rules! dispatch {
 
 #[cfg(target_arch = "aarch64")]
 macro_rules! do_and_dispatch {
-    ($jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
+    ($vm:expr, $jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
 
         unsafe {
             asm!(concat!($name, ":")
-                 : "={x11}"($counter), "={w9}"($opcode), "={x10}"($pc)
+                 : "={x11}"($counter), "={w9}"($opcode), "={x10}"($pc), "={x12}"($vm)
                  :
                  :
                  : "volatile");
@@ -219,7 +220,7 @@ macro_rules! do_and_dispatch {
             $action
         }
 
-        dispatch!($pc, $opcode, $jumptable, $counter);
+        dispatch!($vm, $pc, $opcode, $jumptable, $counter);
     }
 }
 
@@ -249,14 +250,14 @@ macro_rules! label_addr {
 
 #[cfg(target_arch = "arm")]
 macro_rules! dispatch {
-    ($pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
+    ($vm:expr, $pc:expr, $opcode:expr, $jumptable:expr, $counter:expr) => {
         $counter += 1;
         let addr = $jumptable[operator($opcode) as usize];
 
         unsafe {
             asm!("bx $0"
                  :
-                 : "r"(addr), "{r11}"($counter), "{r9}"($opcode), "{r10}"($pc)
+                 : "r"(addr), "{r11}"($counter), "{r9}"($opcode), "{r10}"($pc), "{r8}"($vm)
                  :
                  : "volatile"
             );
@@ -267,11 +268,11 @@ macro_rules! dispatch {
 
 #[cfg(target_arch = "arm")]
 macro_rules! do_and_dispatch {
-    ($jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
+    ($vm:expr, $jumptable:expr, $name:expr, $pc:expr, $opcode:expr, $counter:expr, $action:expr) => {
 
         unsafe {
             asm!(concat!($name, ":")
-                 : "={r11}"($counter), "={r9}"($opcode), "={r10}"($pc)
+                 : "={r11}"($counter), "={r9}"($opcode), "={r10}"($pc), "={r8}"($vm)
                  :
                  :
                  : "volatile");
@@ -332,60 +333,60 @@ impl Thread for ThreadedAsmThread {
 
         let mut pc = 0;
         let mut opcode = self.inner.fetch(pc);
-        dispatch!(pc, opcode, ops, counter);
+        dispatch!(&self, pc, opcode, ops, counter);
 
-        do_and_dispatch!(ops, "goto_jmp", pc, opcode, counter, {
+        do_and_dispatch!(&self, ops, "goto_jmp", pc, opcode, counter, {
             pc = self.inner.op_jmp(opcode, pc);
             opcode = self.inner.fetch(pc);
         });
 
-        do_and_dispatch!(ops, "goto_add", pc, opcode, counter, {
+        do_and_dispatch!(&self, ops, "goto_add", pc, opcode, counter, {
             pc = self.inner.op_add(opcode, pc);
             opcode = self.inner.fetch(pc);
         });
 
-        do_and_dispatch!(ops, "goto_mov", pc, opcode, counter, {
+        do_and_dispatch!(&self, ops, "goto_mov", pc, opcode, counter, {
             pc = self.inner.op_mov(opcode, pc);
             opcode = self.inner.fetch(pc);
         });
 
-        do_and_dispatch!(ops, "goto_ceq", pc, opcode, counter, {
+        do_and_dispatch!(&self, ops, "goto_ceq", pc, opcode, counter, {
             pc = self.inner.op_ceq(opcode, pc);
             opcode = self.inner.fetch(pc);
         });
 
-        do_and_dispatch!(ops, "goto_jit", pc, opcode, counter, {
+        do_and_dispatch!(&self, ops, "goto_jit", pc, opcode, counter, {
             let (next_pc, _) = self.inner.op_jit(opcode, pc);
             pc = next_pc;
             opcode = self.inner.fetch(pc);
         });
 
-        do_and_dispatch!(ops, "goto_ldb", pc, opcode, counter, {
+        do_and_dispatch!(&self, ops, "goto_ldb", pc, opcode, counter, {
             pc = self.inner.op_ldb(opcode, pc);
             opcode = self.inner.fetch(pc);
         });
 
-        do_and_dispatch!(ops, "goto_ldi", pc, opcode, counter, {
+        do_and_dispatch!(&self, ops, "goto_ldi", pc, opcode, counter, {
             pc = self.inner.op_ldi(opcode, pc);
             opcode = self.inner.fetch(pc);
         });
 
-        do_and_dispatch!(ops, "goto_cgt", pc, opcode, counter, {
+        do_and_dispatch!(&self, ops, "goto_cgt", pc, opcode, counter, {
             pc = self.inner.op_cgt(opcode, pc);
             opcode = self.inner.fetch(pc);
         });
 
-        do_and_dispatch!(ops, "goto_rnd", pc, opcode, counter, {
+        do_and_dispatch!(&self, ops, "goto_rnd", pc, opcode, counter, {
             pc = self.inner.op_rnd(opcode, pc);
             opcode = self.inner.fetch(pc);
         });
 
-        do_and_dispatch!(ops, "goto_div", pc, opcode, counter, {
+        do_and_dispatch!(&self, ops, "goto_div", pc, opcode, counter, {
             pc = self.inner.op_div(opcode, pc);
             opcode = self.inner.fetch(pc);
         });
 
-        do_and_dispatch!(ops, "goto_mod", pc, opcode, counter, {
+        do_and_dispatch!(&self, ops, "goto_mod", pc, opcode, counter, {
             pc = self.inner.op_mod(opcode, pc);
             opcode = self.inner.fetch(pc);
         });
